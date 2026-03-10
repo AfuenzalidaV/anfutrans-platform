@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "GitHub.copilot",
+    "eamodio.gitlens",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "Prisma.prisma",
+    "ms-azuretools.vscode-docker",
+    "angular.ng-template"
+  ]
+}

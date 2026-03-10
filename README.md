@@ -74,3 +74,23 @@ Este proyecto utiliza Git. Ver `.gitignore` para archivos excluidos.
 ## Licencia
 
 Todos los derechos reservados - ANFUTRANS 2026
+
+## Backend
+
+Framework: NestJS  
+ORM: Prisma  
+Database: PostgreSQL
+
+### Comandos útiles
+
+Introspección DB
+
+npx prisma db pull
+
+Generar cliente
+
+npx prisma generate
+
+Panel administración
+
+npx prisma studio
