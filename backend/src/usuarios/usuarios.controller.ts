@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common'
+import { Controller, Get } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 
 @Controller('usuarios')
@@ -9,4 +9,4 @@ export class UsuariosController {
   findAll() {
     return this.usuariosService.findAll()
   }
-}
+};

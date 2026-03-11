@@ -1,13 +1,8 @@
-import { Injectable } from '@nestjs/common'
-import { PrismaService } from '../database/prisma.service'
-
+import { Injectable } from '@nestjs/common';
 @Injectable()
 export class UsuariosService {
 
-  constructor(private prisma: PrismaService) {}
-
-  async findAll() {
-    return this.prisma.region.findMany()
+  findAll() {
+    return []
   }
-
-}
+};

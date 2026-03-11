@@ -1,12 +1,13 @@
-import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
-import { DatabaseModule } from './database/database.module'
-import { AuthModule } from './auth/auth.module'
-import { UsuariosModule } from './usuarios/usuarios.module'
-import { SociosModule } from './socios/socios.module'
-import { TramitesModule } from './tramites/tramites.module'
-import { BeneficiosModule } from './beneficios/beneficios.module'
-import { ContenidosModule } from './contenidos/contenidos.module'
+import { Module } from '@nestjs/common';
+import { RegionesModule } from './catalogos/regiones/regiones.module';
+import { ConfigModule } from '@nestjs/config';
+import { DatabaseModule } from './database/database.module';
+import { AuthModule } from './auth/auth.module';
+import { UsuariosModule } from './usuarios/usuarios.module';
+import { SociosModule } from './socios/socios.module';
+import { TramitesModule } from './tramites/tramites.module';
+import { BeneficiosModule } from './beneficios/beneficios.module';
+import { ContenidosModule } from './contenidos/contenidos.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ContenidosModule } from './contenidos/contenidos.module'
       isGlobal: true,
     }),
 
+    RegionesModule,
     DatabaseModule,
     AuthModule,
     UsuariosModule,
