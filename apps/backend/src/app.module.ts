@@ -8,6 +8,13 @@ import { SociosModule } from './socios/socios.module';
 import { TramitesModule } from './tramites/tramites.module';
 import { BeneficiosModule } from './beneficios/beneficios.module';
 import { ContenidosModule } from './contenidos/contenidos.module';
+import { ComunasModule } from './catalogos/comunas/comunas.module';
+import { TipoDocumentoModule } from './catalogos/tipo-documento/tipo-documento.module';
+import { TipoBeneficioModule } from './catalogos/tipo-beneficio/tipo-beneficio.module';
+import { TipoCertificadoModule } from './catalogos/tipo-certificado/tipo-certificado.module';
+import { EstadoSolicitudModule } from './catalogos/estado-solicitud/estado-solicitud.module';
+import { ParametrosModule } from './catalogos/parametros/parametros.module';
+import { CargosDirigencialesModule } from './catalogos/cargos-dirigenciales/cargos-dirigenciales.module';
 
 @Module({
   imports: [
@@ -16,13 +23,20 @@ import { ContenidosModule } from './contenidos/contenidos.module';
     }),
 
     RegionesModule,
+    ComunasModule,
+    TipoDocumentoModule,
+    TipoBeneficioModule,
+    TipoCertificadoModule,
+    EstadoSolicitudModule,
+    ParametrosModule,
+    CargosDirigencialesModule,
     DatabaseModule,
     AuthModule,
     UsuariosModule,
     SociosModule,
     TramitesModule,
     BeneficiosModule,
-    ContenidosModule
+    ContenidosModule,
   ],
 })
 export class AppModule {}
