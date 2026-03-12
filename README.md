@@ -1,206 +1,119 @@
 # ANFUTRANS Platform
 
-Plataforma digital para la **gestión integral de la ANFUTRANS**, orientada a la administración de socios, trámites, beneficios, contenidos y catálogos del sistema.
+Plataforma digital para la gestion integral de ANFUTRANS, orientada a la administracion de socios, tramites, beneficios, contenidos y catalogos.
 
-El proyecto está construido como una arquitectura moderna basada en **API REST + Frontend SPA**.
+## Estructura del repositorio
 
----
-
-# Arquitectura del sistema
-
-El sistema está dividido en dos aplicaciones principales:
-
-anfutrans-platform/
-│
-├── apps/
-│ ├── backend/ # API Backend (NestJS + Prisma)
-│ └── frontend/ # Frontend Angular
-│
-├── database/ # Scripts de base de datos
-├── docker/ # Configuración Docker
-├── docs/ # Documentación del proyecto
-└── README.md
-
-
----
-
-# Stack Tecnológico
+```text
+anfutrans-platform
+|
+|-- apps
+|   |-- backend
+|   `-- frontend
+|
+|-- database
+|-- docker
+|-- docs
+|
+|-- README.md
+`-- .gitignore
+```
 
 ## Backend
 
-- Node.js
-- NestJS
-- Prisma ORM
-- PostgreSQL
-- Swagger / OpenAPI
-- TypeScript
+El backend esta implementado con NestJS y Prisma bajo `apps/backend`.
+
+Arquitectura modular principal:
+
+```text
+apps/backend/src
+|
+|-- auth
+|-- usuarios
+|-- socios
+|-- tramites
+|-- beneficios
+|-- contenidos
+|-- catalogos
+|-- database
+`-- common
+```
+
+Catalogos previstos:
+
+```text
+catalogos
+|-- regiones
+|-- comunas
+|-- tipo-documento
+|-- tipo-beneficio
+|-- tipo-certificado
+|-- estado-solicitud
+|-- parametros
+`-- cargos-dirigenciales
+```
 
 ## Frontend
 
-- Angular 21+
-- TypeScript
-- RxJS
-- Angular CLI
+La carpeta `apps/frontend` queda preparada para alojar la SPA del proyecto.
 
-## Infraestructura
+## Base de datos
 
-- Docker (opcional)
-- Git / GitHub
-- ESLint
-- Prettier
+PostgreSQL como motor principal y Prisma ORM como capa de acceso.
 
----
+Tablas base esperadas en schema `core`:
 
-# Arquitectura Backend
+- `core.region`
+- `core.comuna`
+- `core.tipo_documento`
+- `core.tipo_beneficio`
+- `core.tipo_certificado`
+- `core.estado_solicitud`
+- `core.parametro_sistema`
+- `core.cargo_dirigencial`
 
-El backend sigue una **arquitectura modular con NestJS**.
+## Instalacion
 
-backend/src
-│
-├── auth
-├── usuarios
-├── socios
-├── tramites
-├── beneficios
-├── contenidos
-│
-├── catalogos
-│ └── regiones
-│
-└── database
-├── database.module.ts
-└── prisma.service.ts
+1. Clonar repositorio:
 
-Los **catálogos del sistema** se agrupan bajo:
-catalogos/
-
-
-Ejemplo de endpoint:
-GET /catalogos/regiones
-
-
----
-
-# Base de Datos
-
-Base de datos **PostgreSQL** gestionada con **Prisma ORM**.
-
-Esquema principal:
-core
-
-Tablas base iniciales:
-region
-comuna
-tipo_documento
-tipo_beneficio
-tipo_certificado
-estado_solicitud
-parametro_sistema
-cargo_dirigencial
-
----
-
-# Requisitos
-
-Antes de ejecutar el proyecto se requiere:
-
-- Node.js >= 18
-- npm >= 9
-- PostgreSQL
-- Angular CLI
-- Docker (opcional)
-
----
-
-# Instalación del proyecto
-
-Clonar repositorio:
-
+```bash
 git clone https://github.com/AfuenzalidaV/anfutrans-platform.git
 cd anfutrans-platform
-Instalación del Backend
+```
+
+2. Instalar backend:
+
+```bash
 cd apps/backend
 npm install
-Crear archivo .env:
+```
 
+3. Configurar variables de entorno en `apps/backend/.env`:
+
+```env
 DATABASE_URL=postgresql://anfutrans_app:CambiarPasswordSegura@localhost:5432/anfutrans_db
-Ejecutar backend:
+```
 
+4. Levantar backend:
+
+```bash
 npm run start:dev
-API disponible en:
+```
 
-http://localhost:3000
-Documentación de la API
-La API se documenta automáticamente con Swagger.
+## Swagger
 
-Abrir en el navegador:
+Con el backend en ejecucion, la documentacion OpenAPI esta disponible en:
 
-http://localhost:3000/api
-Desde Swagger es posible:
+- `http://localhost:3000/api`
 
-explorar endpoints
+## Comandos utiles de Prisma
 
-ejecutar requests
-
-revisar respuestas
-
-validar la API
-
-Instalación del Frontend
-cd apps/frontend
-npm install
-Ejecutar frontend:
-
-ng serve
-Aplicación disponible en:
-
-http://localhost:4200
-Prisma ORM
-Comandos útiles para desarrollo:
-
-Generar cliente
+```bash
+cd apps/backend
 npx prisma generate
-Introspección de base de datos
-npx prisma db pull
-Panel visual de base de datos
 npx prisma studio
-Control de versiones
-Repositorio:
+```
 
-https://github.com/AfuenzalidaV/anfutrans-platform
-Checkpoint importante del backend:
+## Documentacion tecnica
 
-v0.1-backend-base
-Este punto representa:
-
-Backend NestJS operativo
-
-Conexión Prisma + PostgreSQL funcionando
-
-Swagger habilitado
-
-Primer módulo de catálogo implementado
-
-Próximos módulos del sistema
-El backend incluirá:
-
-auth
-usuarios
-socios
-tramites
-beneficios
-contenidos
-catalogos
-Dentro de catalogos:
-
-regiones
-comunas
-tipo-documento
-tipo-beneficio
-tipo-certificado
-estado-solicitud
-parametros
-cargo-dirigencial
-Licencia
-Todos los derechos reservados
-ANFUTRANS – 2026
+- `docs/arquitectura-backend.md`
