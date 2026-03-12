@@ -96,7 +96,7 @@ Table tipo_beneficio {
 }
 
 Table beneficio {
-  id                int         [pk]
+  id                uuid        [pk, default: `gen_random_uuid()`]
   nombre            varchar(150)[not null]
   descripcion       text
   tipo_beneficio_id int         [not null]
