@@ -1,0 +1,189 @@
+Project ANFUTRANS {
+  database_type: "PostgreSQL"
+}
+
+Table rol {
+  id     int         [pk, increment]
+  codigo varchar(20) [not null, unique]
+  nombre varchar(50) [not null]
+  activo boolean     [default: true]
+}
+
+Table usuario {
+  id            uuid        [pk, default: `gen_random_uuid()`]
+  email         varchar(150)[not null, unique]
+  password_hash varchar(255)[not null]
+  nombre        varchar(100)[not null]
+  apellido      varchar(100)[not null]
+  rol_id        int         [not null]
+  activo        boolean     [default: true]
+  created_at    timestamp   [default: `now()`]
+  updated_at    timestamp
+}
+
+Table region {
+  id     int         [pk, increment]
+  codigo varchar(10) [not null, unique]
+  nombre varchar(100)[not null]
+  activo boolean     [default: true]
+}
+
+Table comuna {
+  id        int         [pk, increment]
+  codigo    varchar(10) [not null, unique]
+  nombre    varchar(100)[not null]
+  region_id int         [not null]
+  activo    boolean     [default: true]
+}
+
+Table socio {
+  id            uuid        [pk, default: `gen_random_uuid()`]
+  rut           varchar(12) [not null, unique]
+  nombre        varchar(100)[not null]
+  apellido      varchar(100)[not null]
+  email         varchar(150)
+  telefono      varchar(20)
+  direccion     varchar(250)
+  comuna_id     int         [not null]
+  fecha_ingreso date
+  activo        boolean     [default: true]
+  created_at    timestamp   [default: `now()`]
+  updated_at    timestamp
+}
+
+Table tipo_solicitud {
+  id                  int         [pk, increment]
+  codigo              varchar(50) [not null, unique]
+  nombre              varchar(150)[not null]
+  descripcion         text
+  requiere_aprobacion boolean     [default: true]
+  activo              boolean     [default: true]
+}
+
+Table estado_solicitud {
+  id     int         [pk, increment]
+  codigo varchar(50) [not null, unique]
+  nombre varchar(100)[not null]
+  orden  int
+  activo boolean     [default: true]
+}
+
+Table solicitud {
+  id                   uuid      [pk, default: `gen_random_uuid()`]
+  socio_id             uuid      [not null]
+  tipo_solicitud_id    int       [not null]
+  estado_solicitud_id  int       [not null]
+  fecha_solicitud      timestamp [default: `now()`]
+  observaciones        text
+  created_at           timestamp [default: `now()`]
+  updated_at           timestamp
+}
+
+Table solicitud_historial {
+  id                  uuid      [pk, default: `gen_random_uuid()`]
+  solicitud_id        uuid      [not null]
+  estado_solicitud_id int       [not null]
+  usuario_id          uuid
+  fecha               timestamp [default: `now()`]
+  comentario          text
+}
+
+Table tipo_beneficio {
+  id     int         [pk, increment]
+  codigo varchar(50) [not null, unique]
+  nombre varchar(100)[not null]
+  activo boolean     [default: true]
+}
+
+Table beneficio {
+  id                int         [pk]
+  nombre            varchar(150)[not null]
+  descripcion       text
+  tipo_beneficio_id int         [not null]
+  activo            boolean     [default: true]
+  created_at        timestamp   [default: `now()`]
+}
+
+Table beneficio_socio {
+  id                uuid      [pk, default: `gen_random_uuid()`]
+  socio_id          uuid      [not null]
+  beneficio_id      uuid      [not null]
+  fecha_otorgamiento timestamp [default: `now()`]
+  activo            boolean   [default: true]
+
+  indexes {
+    (socio_id, beneficio_id) [unique]
+  }
+}
+
+Table tipo_documento {
+  id     int         [pk, increment]
+  codigo varchar(50) [not null, unique]
+  nombre varchar(100)[not null]
+  ambito varchar(50)
+  activo boolean     [default: true]
+}
+
+Table tipo_certificado {
+  id                int         [pk, increment]
+  codigo            varchar(50) [not null, unique]
+  nombre            varchar(100)[not null]
+  requiere_vigencia boolean     [default: false]
+  activo            boolean     [default: true]
+}
+
+Table documento {
+  id                uuid        [pk, default: `gen_random_uuid()`]
+  nombre_archivo    varchar(255)[not null]
+  ruta              varchar(500)[not null]
+  tipo_documento_id int         [not null]
+  usuario_id        uuid
+  tamanio_bytes     int
+  fecha_subida      timestamp   [default: `now()`]
+}
+
+Table solicitud_documento {
+  id           uuid [pk, default: `gen_random_uuid()`]
+  solicitud_id uuid [not null]
+  documento_id uuid [not null]
+  created_at   timestamp [default: `now()`]
+
+  indexes {
+    (solicitud_id, documento_id) [unique]
+  }
+}
+
+Table cargo_dirigencial {
+  id     int         [pk, increment]
+  codigo varchar(50) [not null, unique]
+  nombre varchar(100)[not null]
+  nivel  varchar(20)
+  activo boolean     [default: true]
+}
+
+Table parametro_sistema {
+  id          uuid        [pk, default: `gen_random_uuid()`]
+  clave       varchar(100)[not null, unique]
+  valor       text
+  descripcion text
+  updated_at  timestamp
+}
+
+// ─── RELACIONES ───────────────────────────────────────────────────────────────
+
+Ref: usuario.rol_id              > rol.id
+Ref: comuna.region_id            > region.id
+Ref: socio.comuna_id             > comuna.id
+Ref: solicitud.socio_id          > socio.id
+Ref: solicitud.tipo_solicitud_id > tipo_solicitud.id
+Ref: solicitud.estado_solicitud_id > estado_solicitud.id
+Ref: solicitud_historial.solicitud_id        > solicitud.id
+Ref: solicitud_historial.estado_solicitud_id > estado_solicitud.id
+Ref: solicitud_historial.usuario_id          > usuario.id
+Ref: beneficio.tipo_beneficio_id   > tipo_beneficio.id
+Ref: beneficio_socio.socio_id      > socio.id
+Ref: beneficio_socio.beneficio_id  > beneficio.id
+Ref: documento.tipo_documento_id   > tipo_documento.id
+Ref: documento.usuario_id          > usuario.id
+Ref: solicitud_documento.solicitud_id > solicitud.id
+Ref: solicitud_documento.documento_id > documento.id
