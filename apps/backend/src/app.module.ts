@@ -15,6 +15,7 @@ import { TipoCertificadoModule } from './catalogos/tipo-certificado/tipo-certifi
 import { EstadoSolicitudModule } from './catalogos/estado-solicitud/estado-solicitud.module';
 import { ParametrosModule } from './catalogos/parametros/parametros.module';
 import { CargosDirigencialesModule } from './catalogos/cargos-dirigenciales/cargos-dirigenciales.module';
+import { TipoSolicitudModule } from './catalogos/tipo-solicitud/tipo-solicitud.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { CargosDirigencialesModule } from './catalogos/cargos-dirigenciales/carg
     TipoBeneficioModule,
     TipoCertificadoModule,
     EstadoSolicitudModule,
+    TipoSolicitudModule,
     ParametrosModule,
     CargosDirigencialesModule,
     DatabaseModule,
