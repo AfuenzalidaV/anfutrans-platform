@@ -32,6 +32,19 @@ Response 200:
 }
 ```
 
+### POST /auth/register
+
+Request:
+
+```json
+{
+  "email": "nuevo@anfutrans.cl",
+  "password": "123456",
+  "nombre": "Nuevo",
+  "apellido": "Usuario"
+}
+```
+
 ## Catálogos
 
 ### GET /catalogos/regiones
@@ -101,13 +114,13 @@ Request POST (ejemplo):
 
 ## Solicitudes
 
-### GET /tramites
+### GET /solicitudes
 
-### GET /tramites/:id
+### GET /solicitudes/:id
 
-### POST /tramites
+### POST /solicitudes
 
-Nota: en backend actual el dominio de solicitudes se expone como modulo `tramites`.
+Nota: por compatibilidad, tambien existen rutas alias en /tramites.
 
 ## Beneficios
 

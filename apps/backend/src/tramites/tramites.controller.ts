@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { TramitesService } from './tramites.service';
 import { CreateTramiteDto } from './dto/create-tramite.dto';
 
-@Controller('tramites')
+@Controller(['solicitudes', 'tramites'])
 export class TramitesController {
   constructor(private readonly tramitesService: TramitesService) {}
 

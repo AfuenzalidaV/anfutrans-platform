@@ -9,7 +9,7 @@ Swagger: `http://localhost:3000/api`
 
 ```
 POST   /auth/login
-POST   /auth/logout
+POST   /auth/register
 ```
 
 ---
@@ -34,12 +34,12 @@ POST   /socios
 
 ---
 
-## Solicitudes (Tramites)
+## Solicitudes
 
 ```
-GET    /tramites
-GET    /tramites/:id
-POST   /tramites
+GET    /solicitudes
+GET    /solicitudes/:id
+POST   /solicitudes
 ```
 
 ---
