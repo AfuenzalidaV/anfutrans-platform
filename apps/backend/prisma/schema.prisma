@@ -25,6 +25,8 @@ model comuna {
   activo    Boolean?
   region    region   @relation(fields: [region_id], references: [id])
 
+  socio socio[]
+
   @@schema("core")
 }
 
@@ -34,6 +36,9 @@ model estado_solicitud {
   nombre String   @db.VarChar(100)
   orden  Int?
   activo Boolean? @default(true)
+
+  solicitud           solicitud[]
+  solicitud_historial solicitud_historial[]
 
   @@schema("core")
 }
@@ -64,6 +69,8 @@ model tipo_beneficio {
   nombre String   @db.VarChar(100)
   activo Boolean? @default(true)
 
+  beneficio beneficio[]
+
   @@schema("core")
 }
 
@@ -84,17 +91,165 @@ model tipo_documento {
   ambito String?  @db.VarChar(50)
   activo Boolean? @default(true)
 
+  documento documento[]
+
   @@schema("core")
 }
 
 model tipo_solicitud {
-  id                  Int      @id @default(autoincrement()) @db.SmallInt
-  codigo              String   @unique @db.VarChar(50)
-  nombre              String   @db.VarChar(150)
+  id                  Int         @id @default(autoincrement()) @db.SmallInt
+  codigo              String      @unique @db.VarChar(50)
+  nombre              String      @db.VarChar(150)
   descripcion         String?
-  requiere_aprobacion Boolean? @default(true)
-  permite_borrador    Boolean? @default(false)
-  activo              Boolean? @default(true)
+  requiere_aprobacion Boolean?    @default(true)
+  permite_borrador    Boolean?    @default(false)
+  activo              Boolean?    @default(true)
 
+  solicitud solicitud[]
+
+  @@schema("core")
+}
+
+// ─── SEGURIDAD ────────────────────────────────────────────────────────────────
+
+model rol {
+  id     Int       @id @default(autoincrement()) @db.SmallInt
+  codigo String    @unique @db.VarChar(20)
+  nombre String    @db.VarChar(50)
+  activo Boolean?  @default(true)
+
+  usuario usuario[]
+
+  @@schema("core")
+}
+
+model usuario {
+  id            String    @id @default(uuid()) @db.Uuid
+  email         String    @unique @db.VarChar(150)
+  password_hash String    @db.VarChar(255)
+  nombre        String    @db.VarChar(100)
+  apellido      String    @db.VarChar(100)
+  rol_id        Int       @db.SmallInt
+  activo        Boolean?  @default(true)
+  created_at    DateTime? @default(now()) @db.Timestamp(6)
+  updated_at    DateTime? @updatedAt @db.Timestamp(6)
+
+  rol rol @relation(fields: [rol_id], references: [id])
+
+  @@schema("core")
+}
+
+// ─── SOCIOS ───────────────────────────────────────────────────────────────────
+
+model socio {
+  id         String    @id @default(uuid()) @db.Uuid
+  rut        String    @unique @db.VarChar(12)
+  nombre     String    @db.VarChar(100)
+  apellido   String    @db.VarChar(100)
+  email      String?   @db.VarChar(150)
+  telefono   String?   @db.VarChar(20)
+  comuna_id  Int
+  activo     Boolean?  @default(true)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @updatedAt @db.Timestamp(6)
+
+  comuna          comuna            @relation(fields: [comuna_id], references: [id])
+  solicitud       solicitud[]
+  beneficio_socio beneficio_socio[]
+
+  @@schema("core")
+}
+
+// ─── TRAMITES ─────────────────────────────────────────────────────────────────
+
+model solicitud {
+  id                 String    @id @default(uuid()) @db.Uuid
+  socio_id           String    @db.Uuid
+  tipo_solicitud_id  Int       @db.SmallInt
+  estado_solicitud_id Int      @db.SmallInt
+  observacion        String?
+  created_at         DateTime? @default(now()) @db.Timestamp(6)
+  updated_at         DateTime? @updatedAt @db.Timestamp(6)
+
+  socio            socio              @relation(fields: [socio_id], references: [id])
+  tipo_solicitud   tipo_solicitud     @relation(fields: [tipo_solicitud_id], references: [id])
+  estado_solicitud estado_solicitud   @relation(fields: [estado_solicitud_id], references: [id])
+  historial        solicitud_historial[]
+  documentos       solicitud_documento[]
+
+  @@schema("core")
+}
+
+model solicitud_historial {
+  id                   String    @id @default(uuid()) @db.Uuid
+  solicitud_id         String    @db.Uuid
+  estado_solicitud_id  Int       @db.SmallInt
+  observacion          String?
+  created_at           DateTime? @default(now()) @db.Timestamp(6)
+
+  solicitud        solicitud        @relation(fields: [solicitud_id], references: [id])
+  estado_solicitud estado_solicitud @relation(fields: [estado_solicitud_id], references: [id])
+
+  @@schema("core")
+}
+
+// ─── BENEFICIOS ───────────────────────────────────────────────────────────────
+
+model beneficio {
+  id               String    @id @default(uuid()) @db.Uuid
+  nombre           String    @db.VarChar(150)
+  descripcion      String?
+  tipo_beneficio_id Int      @db.SmallInt
+  activo           Boolean?  @default(true)
+  created_at       DateTime? @default(now()) @db.Timestamp(6)
+
+  tipo_beneficio  tipo_beneficio    @relation(fields: [tipo_beneficio_id], references: [id])
+  beneficio_socio beneficio_socio[]
+
+  @@schema("core")
+}
+
+model beneficio_socio {
+  id           String    @id @default(uuid()) @db.Uuid
+  beneficio_id String    @db.Uuid
+  socio_id     String    @db.Uuid
+  fecha_inicio DateTime? @db.Date
+  fecha_fin    DateTime? @db.Date
+  activo       Boolean?  @default(true)
+  created_at   DateTime? @default(now()) @db.Timestamp(6)
+
+  beneficio beneficio @relation(fields: [beneficio_id], references: [id])
+  socio     socio     @relation(fields: [socio_id], references: [id])
+
+  @@unique([beneficio_id, socio_id])
+  @@schema("core")
+}
+
+// ─── DOCUMENTOS ───────────────────────────────────────────────────────────────
+
+model documento {
+  id                String    @id @default(uuid()) @db.Uuid
+  nombre_archivo    String    @db.VarChar(255)
+  ruta              String    @db.VarChar(500)
+  tipo_documento_id Int       @db.SmallInt
+  tamanio_bytes     Int?
+  created_at        DateTime? @default(now()) @db.Timestamp(6)
+
+  tipo_documento      tipo_documento        @relation(fields: [tipo_documento_id], references: [id])
+  solicitud_documento solicitud_documento[]
+
+  @@schema("core")
+}
+
+model solicitud_documento {
+  id           String    @id @default(uuid()) @db.Uuid
+  solicitud_id String    @db.Uuid
+  documento_id String    @db.Uuid
+  created_at   DateTime? @default(now()) @db.Timestamp(6)
+
+  solicitud solicitud @relation(fields: [solicitud_id], references: [id])
+  documento documento @relation(fields: [documento_id], references: [id])
+
+  @@unique([solicitud_id, documento_id])
   @@schema("core")
 }
