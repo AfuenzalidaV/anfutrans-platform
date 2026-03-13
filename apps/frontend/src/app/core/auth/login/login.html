@@ -1,0 +1,21 @@
+<div class="login-container">
+  <div class="login-box">
+    <h2>Login ANFUTRANS</h2>
+
+    <form #loginForm="ngForm" (ngSubmit)="onLogin()">
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="email" [(ngModel)]="credentials.email" placeholder="Email" required>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" [(ngModel)]="credentials.password" placeholder="Password" required>
+      </div>
+
+      <button type="submit" [disabled]="!loginForm.form.valid">Ingresar</button>
+
+    </form>
+  </div>
+</div>
