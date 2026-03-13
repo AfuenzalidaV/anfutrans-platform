@@ -1,19 +1,19 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class ApiService {
-  private readonly api = "http://localhost:3000";
+  private api = 'http://localhost:3000';
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private http: HttpClient) {}
 
   get(path: string) {
     return this.http.get(`${this.api}/${path}`);
   }
 
-  post(path: string, body: unknown) {
+  post(path: string, body: any) {
     return this.http.post(`${this.api}/${path}`, body);
   }
 }
