@@ -12,15 +12,20 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 
+import { SharedModule } from '../../shared/shared.module';
 import { SociosRoutingModule } from './socios-routing-module';
 import { SociosList } from './socios-list/socios-list';
 import { SocioForm } from './socio-form/socio-form';
+import { SociosTable } from './socios-table/socios-table';
+import { SocioCreate } from './socio-create/socio-create';
+import { SocioEdit } from './socio-edit/socio-edit';
 
 @NgModule({
-  declarations: [SociosList, SocioForm],
+  declarations: [SociosList, SocioForm, SociosTable, SocioCreate, SocioEdit],
   imports: [
     CommonModule,
     SociosRoutingModule,
+    SharedModule,
     ReactiveFormsModule,
     MatTableModule,
     MatPaginatorModule,
@@ -29,7 +34,7 @@ import { SocioForm } from './socio-form/socio-form';
     MatInputModule,
     MatButtonModule,
     MatCardModule,
-    MatIconModule
+    MatIconModule,
   ],
 })
 export class SociosModule {}

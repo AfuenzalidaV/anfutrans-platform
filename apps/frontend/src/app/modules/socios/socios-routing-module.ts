@@ -1,12 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { SociosList } from './socios-list/socios-list';
-import { SocioForm } from './socio-form/socio-form';
+import { SociosTable } from './socios-table/socios-table';
+import { SocioCreate } from './socio-create/socio-create';
+import { SocioEdit } from './socio-edit/socio-edit';
 
 const routes: Routes = [
-  { path: '', component: SociosList },
-  { path: 'nuevo', component: SocioForm },
-  { path: 'editar/:id', component: SocioForm }
+  { path: '', component: SociosTable },
+  { path: 'nuevo', component: SocioCreate },
+  { path: 'editar/:id', component: SocioEdit }
 ];
 
 @NgModule({

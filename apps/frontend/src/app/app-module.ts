@@ -44,11 +44,11 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
     MatIconModule,
     MatToolbarModule,
     MatSidenavModule,
-    MatListModule
+    MatListModule,
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideHttpClient(withInterceptors([authInterceptor]))
+    provideHttpClient(withInterceptors([authInterceptor])),
   ],
   bootstrap: [App],
 })

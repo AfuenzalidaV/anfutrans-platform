@@ -1,0 +1,17 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Catálogos del Sistema</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item *ngFor="let catalogo of catalogos">
+        <mat-icon matListItemIcon>folder</mat-icon>
+        <div matListItemTitle>{{ catalogo.nombre }}</div>
+        <button mat-icon-button [routerLink]="catalogo.ruta">
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>
