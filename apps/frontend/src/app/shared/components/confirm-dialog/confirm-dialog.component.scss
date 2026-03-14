@@ -1,0 +1,58 @@
+.confirm-dialog {
+  min-width: 320px;
+  max-width: 500px;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+
+  .dialog-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+  }
+}
+
+mat-dialog-content {
+  padding: 16px 0;
+
+  p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #555;
+  }
+}
+
+mat-dialog-actions {
+  padding: 16px 0 0;
+  gap: 8px;
+}
+
+// Tipos de diálogo
+.dialog-info {
+  .dialog-icon {
+    color: #1976d2;
+  }
+}
+
+.dialog-warning {
+  .dialog-icon {
+    color: #f57c00;
+  }
+}
+
+.dialog-danger {
+  .dialog-icon {
+    color: #d32f2f;
+  }
+}

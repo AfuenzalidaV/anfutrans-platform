@@ -7,10 +7,16 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
 
 import { SocioTable } from './socio-table/socio-table.component';
 import { SocioCreate } from './socio-create/socio-create.component';
 import { SocioEdit } from './socio-edit/socio-edit.component';
+import { SociosList } from './socios-list/socios-list';
+import { SocioForm } from './socio-form/socio-form';
+import { SociosTable } from './socios-table/socios-table';
 import { SocioService } from './socio.service';
 import { SociosRoutingModule } from './socios-routing.module';
 import { SharedModule } from '../../shared/shared.module';
@@ -23,7 +29,10 @@ import { SharedModule } from '../../shared/shared.module';
   declarations: [
     SocioTable,
     SocioCreate,
-    SocioEdit
+    SocioEdit,
+    SociosList,
+    SocioForm,
+    SociosTable
   ],
   imports: [
     CommonModule,
@@ -34,6 +43,9 @@ import { SharedModule } from '../../shared/shared.module';
     MatInputModule,
     MatProgressSpinnerModule,
     MatIconModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
     SociosRoutingModule,
     SharedModule
   ],

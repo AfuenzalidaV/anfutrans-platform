@@ -17,7 +17,24 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "prisma:generate": "npx prisma generate",
+    "prisma:migrate": "npx prisma migrate dev --name",
+    "prisma:migrate:create": "npx prisma migrate dev --create-only",
+    "prisma:migrate:deploy": "npx prisma migrate deploy",
+    "prisma:migrate:status": "npx prisma migrate status",
+    "prisma:migrate:reset": "npx prisma migrate reset",
+    "prisma:migrate:resolve": "npx prisma migrate resolve",
+    "prisma:studio": "npx prisma studio",
+    "prisma:seed": "ts-node prisma/seed.ts",
+    "prisma:db:push": "npx prisma db push",
+    "prisma:db:pull": "npx prisma db pull",
+    "db:setup": "node scripts/db-setup.js",
+    "db:reset": "node scripts/db-reset.js",
+    "db:status": "node scripts/db-status.js",
+    "db:fresh": "npm run db:reset",
+    "db:backup": "node scripts/db-backup.js",
+    "db:restore": "node scripts/db-restore.js"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -82,5 +99,8 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   }
 }

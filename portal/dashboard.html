@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - ANFUTRANS</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="dashboard.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dashboard-page">
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div class="container">
+        <div class="header-content">
+          <div class="logo">
+            <div class="logo-icon">
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 50 50"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="50" height="50" rx="8" fill="#1976D2" />
+                <path d="M25 12L35 20V35L25 43L15 35V20L25 12Z" fill="white" />
+                <circle cx="25" cy="27" r="6" fill="#1976D2" />
+              </svg>
+            </div>
+            <div class="logo-text">
+              <h1>ANFUTRANS</h1>
+              <p>Plataforma de Socios</p>
+            </div>
+          </div>
+          <div class="header-right">
+            <div class="user-info">
+              <div class="user-avatar" id="userAvatar">?</div>
+              <div class="user-details">
+                <span class="user-name" id="userName">Cargando...</span>
+                <span class="user-role" id="userRole">-</span>
+              </div>
+            </div>
+            <button class="btn-logout" id="logoutBtn">Cerrar Sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="dashboard-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <nav class="sidebar-nav">
+          <a href="#" class="nav-item active" data-section="overview">
+            <span class="nav-icon">📊</span>
+            <span>Vista General</span>
+          </a>
+          <a href="#" class="nav-item" data-section="solicitudes">
+            <span class="nav-icon">📋</span>
+            <span>Mis Solicitudes</span>
+          </a>
+          <a href="#" class="nav-item" data-section="beneficios">
+            <span class="nav-icon">🎁</span>
+            <span>Beneficios</span>
+          </a>
+          <a href="#" class="nav-item" data-section="cuenta">
+            <span class="nav-icon">💰</span>
+            <span>Estado de Cuenta</span>
+          </a>
+          <a href="#" class="nav-item" data-section="documentos">
+            <span class="nav-icon">📄</span>
+            <span>Ducumentos</span>
+          </a>
+          <a href="#" class="nav-item" data-section="perfil">
+            <span class="nav-icon">👤</span>
+            <span>Mi Perfil</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="help-widget">
+            <h4>¿Necesitas ayuda?</h4>
+            <p>Contacta a soporte</p>
+            <a href="#" class="btn-help">Abrir Chat</a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Dashboard Content -->
+      <main class="dashboard-main">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+          <h2>Bienvenido, <span id="welcomeName">Usuario</span></h2>
+          <p>Esta es tu vista general de la plataforma de socios</p>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-card">
+            <div class="stat-icon">📋</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statSolicitudes">0</div>
+              <div class="stat-label">Solicitudes Activas</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statAprobadas">0</div>
+              <div class="stat-label">Solicitudes Aprobadas</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statPendientes">0</div>
+              <div class="stat-label">Pendientes de Revisión</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📄</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statDocumentos">0</div>
+              <div class="stat-label">Documentos Disponibles</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="section-card">
+          <h3 class="section-title">Acciones Rápidas</h3>
+          <div class="quick-actions">
+            <button class="action-btn">
+              <span class="action-icon">📝</span>
+              <span>Nueva Solicitud</span>
+            </button>
+            <button class="action-btn">
+              <span class="action-icon">📥</span>
+              <span>Descargar Certificado</span>
+            </button>
+            <button class="action-btn">
+              <span class="action-icon">💰</span>
+              <span>Solicitar Préstamo</span>
+            </button>
+            <button class="action-btn">
+              <span class="action-icon">📊</span>
+              <span>Ver Estado de Cuenta</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="section-card">
+          <h3 class="section-title">Actividad Reciente</h3>
+          <div id="recentActivity">
+            <p class="text-muted text-center">No hay actividad reciente</p>
+          </div>
+        </div>
+
+        <!-- API Testing Section -->
+        <div class="section-card">
+          <h3 class="section-title">Pruebas de Conexión API</h3>
+          <div class="api-testing">
+            <button class="btn btn-primary" id="testHealthBtn">
+              Test Health Endpoint
+            </button>
+            <button class="btn btn-primary" id="testAuthBtn">
+              Test Auth Status
+            </button>
+            <button class="btn btn-primary" id="testDataBtn">
+              Test Get Data
+            </button>
+            <div id="apiResults" class="api-results"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="dashboard.js"></script>
+  </body>
+</html>

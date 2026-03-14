@@ -1,1 +1,9 @@
 <router-outlet />
+
+<!-- Global Loading Overlay - FASE 8 -->
+<div class="global-loading-overlay" *ngIf="loadingService.loading$ | async">
+  <div class="loading-content">
+    <mat-spinner></mat-spinner>
+    <p>Cargando...</p>
+  </div>
+</div>

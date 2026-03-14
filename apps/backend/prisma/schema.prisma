@@ -1,5 +1,14 @@
+// ============================================================================
+// ANFUTRANS PLATFORM - DATABASE BASELINE ARCHITECTURE  
+// Version: 1.0-database-baseline
+// Date: 2025-03-14
+// Description: Complete institutional database model for Chilean National
+//              Association of Freight Transport Workers (ANFUTRANS)
+// ============================================================================
+
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -7,261 +16,671 @@ datasource db {
   schemas  = ["core"]
 }
 
-// --- CAT�LOGOS ----------------------------------------------------------------
+// =============================================================================
+// ENUMS - Business domain enumerations
+// =============================================================================
 
-model cargo_dirigencial {
+/// Roles de usuario en el sistema
+enum RolUsuario {
+  ADMIN             // Administrador total del sistema
+  DIRECTOR_NACIONAL // Director nacional ANFUTRANS
+  DIRECTOR_REGIONAL // Director regional
+  FUNCIONARIO       // Personal administrativo
+  SOCIO             // Socio de ANFUTRANS
+  CONTADOR          // Contador/Tesorero
+  AUDITOR           // Auditor interno
+
+  @@map("rol_usuario")
+  @@schema("core")
+}
+
+/// Estados posibles de un socio
+enum EstadoSocio {
+  ACTIVO      // Socio activo con derechos vigentes
+  INACTIVO    // Socio temporalmente inactivo
+  SUSPENDIDO  // Socio suspendido por incumplimientos
+  RETIRADO    // Socio que se retiró voluntariamente
+  FALLECIDO   // Socio fallecido
+
+  @@map("estado_socio")
+  @@schema("core")
+}
+
+/// Estados del flujo de tramitación de solicitudes
+enum EstadoSolicitud {
+  BORRADOR    // Solicitud en edición, no enviada
+  PENDIENTE   // Solicitud enviada, esperando revisión
+  EN_REVISION // Solicitud en proceso de evaluación
+  APROBADA    // Solicitud aprobada
+  RECHAZADA   // Solicitud rechazada
+  COMPLETADA  // Solicitud completada y cerrada
+  CANCELADA   // Solicitud cancelada por el solicitante
+
+  @@map("estado_solicitud")
+  @@schema("core")
+}
+
+/// Estados del ciclo de vida de un préstamo
+enum EstadoPrestamo {
+  SOLICITADO    // Préstamo solicitado, no evaluado
+  EN_EVALUACION // Préstamo en proceso de evaluación
+  APROBADO      // Préstamo aprobado, pendiente desembolso
+  DESEMBOLSADO  // Préstamo desembolsado, en pago
+  EN_PAGO       // Préstamo con cuotas en proceso de pago
+  PAGADO        // Préstamo completamente pagado
+  MOROSO        // Préstamo con cuotas vencidas
+  CASTIGADO     // Préstamo no recuperable
+  CANCELADO     // Préstamo cancelado antes de desembolso
+
+  @@map("estado_prestamo")
+  @@schema("core")
+}
+
+/// Tipos de solicitudes que pueden realizar los socios
+enum TipoSolicitud {
+  CERTIFICADO_AFILIACION  // Certificado de afiliación a ANFUTRANS
+  CERTIFICADO_ANTIGUEDAD  // Certificado de antigüedad como socio
+  PRESTAMO                // Solicitud de préstamo
+  BENEFICIO_SALUD         // Beneficio relacionado con salud
+  BENEFICIO_EDUCACION     // Beneficio educacional
+  SUBSIDIO_HABITACIONAL   // Subsidio para vivienda
+  AYUDA_SOCIAL            // Ayuda social extraordinaria
+  ACTUALIZACION_DATOS     // Actualización de datos personales
+  OTRO                    // Otras solicitudes
+
+  @@map("tipo_solicitud")
+  @@schema("core")
+}
+
+/// Tipos de descuentos aplicables en planilla
+enum TipoDescuento {
+  CUOTA_PRESTAMO     // Descuento por cuota de préstamo
+  CUOTA_SOCIAL       // Cuota social mensual obligatoria
+  APORTE_VOLUNTARIO  // Aporte voluntario del socio
+  FONDO_ESPECIAL     // Fondo especial solidario
+  VARIOS             // Otros descuentos
+
+  @@map("tipo_descuento")
+  @@schema("core")
+}
+
+/// Tipos de documentos institucionales
+enum TipoDocumento {
+  LEY          // Leyes aplicables
+  DECRETO      // Decretos
+  REGLAMENTO   // Reglamentos internos
+  ACTA         // Actas de reuniones
+  CONVENIO     // Convenios colectivos
+  FORMULARIO   // Formularios oficiales
+  INSTRUCTIVO  // Instructivos y manuales
+  CIRCULAR     // Circulares informativas
+  OTRO         // Otros documentos
+
+  @@map("tipo_documento")
+  @@schema("core")
+}
+
+/// Tipos de elementos multimedia
+enum TipoMedia {
+  IMAGEN    // Imágenes/fotografías
+  VIDEO     // Videos
+  DOCUMENTO // Documentos
+  AUDIO     // Audio/podcast
+
+  @@map("tipo_media")
+  @@schema("core")
+}
+
+// =============================================================================
+// CATÁLOGOS BÁSICOS
+// =============================================================================
+
+/// Catálogo de regiones de Chile
+model Region {
   id     Int      @id @default(autoincrement()) @db.SmallInt
-  codigo String   @unique @db.VarChar(50)
+  codigo String   @unique @db.VarChar(10)
   nombre String   @db.VarChar(100)
-  nivel  String?  @db.VarChar(20)
-  activo Boolean? @default(true)
+  activo Boolean  @default(true)
 
+  comunas Comuna[]
+
+  @@map("region")
   @@schema("core")
 }
 
-model region {
-  id     Int      @id @default(autoincrement())
-  codigo String   @unique
-  nombre String
-  activo Boolean?
-
-  comunas comuna[]
-
-  @@schema("core")
-}
-
-model comuna {
+/// Catálogo de comunas de Chile
+model Comuna {
   id       Int      @id @default(autoincrement())
-  codigo   String   @unique
-  nombre   String
-  regionId Int      @map("region_id")
-  activo   Boolean?
+  codigo   String   @unique @db.VarChar(10)
+  nombre   String   @db.VarChar(100)
+  regionId Int      @map("region_id") @db.SmallInt
+  activo   Boolean  @default(true)
 
-  region region  @relation(fields: [regionId], references: [id])
-  socios socio[]
+  region Region  @relation(fields: [regionId], references: [id])
+  socios Socio[]
 
+  @@map("comuna")
+  @@index([regionId])
   @@schema("core")
 }
 
-model tipo_solicitud {
-  id                 Int      @id @default(autoincrement()) @db.SmallInt
-  codigo             String   @unique @db.VarChar(50)
-  nombre             String   @db.VarChar(150)
-  descripcion        String?
-  requiereAprobacion Boolean? @default(true) @map("requiere_aprobacion")
-  permiteBorrador    Boolean? @default(false) @map("permite_borrador")
-  activo             Boolean? @default(true)
-
-  solicitudes solicitud[]
-
-  @@schema("core")
-}
-
-model estado_solicitud {
+/// Catálogo de cargos directivos de ANFUTRANS
+model CargoDirigencial {
   id     Int      @id @default(autoincrement()) @db.SmallInt
-  codigo String   @unique @db.VarChar(50)
-  nombre String   @db.VarChar(100)
-  orden  Int?
-  activo Boolean? @default(true)
+  codigo String   @unique @db.VarChar(30)
+  nombre String   @db.VarChar(150)
+  nivel  String?  @db.VarChar(50) // Nacional, Regional, Local
+  activo Boolean  @default(true)
 
-  solicitudes          solicitud[]
-  solicitudHistoriales solicitud_historial[]
-
+  @@map("cargo_dirigencial")
   @@schema("core")
 }
 
-model tipo_beneficio {
-  id     Int      @id @default(autoincrement()) @db.SmallInt
-  codigo String   @unique @db.VarChar(50)
-  nombre String   @db.VarChar(100)
-  activo Boolean? @default(true)
+/// Parámetros de configuración del sistema
+model ParametroSistema {
+  id          String   @id @default(uuid()) @db.Uuid
+  clave       String   @unique @db.VarChar(150)
+  valor       String?  @db.Text
+  descripcion String?  @db.Text
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
 
-  beneficios beneficio[]
-
+  @@map("parametro_sistema")
   @@schema("core")
 }
 
-model tipo_certificado {
-  id               Int      @id @default(autoincrement()) @db.SmallInt
-  codigo           String   @unique @db.VarChar(50)
-  nombre           String   @db.VarChar(100)
-  requiereVigencia Boolean? @default(false) @map("requiere_vigencia")
-  activo           Boolean? @default(true)
+// =============================================================================
+// MÓDULO DE SEGURIDAD Y USUARIOS
+// =============================================================================
 
+/// Usuarios del sistema con roles asignados
+model Usuario {
+  id           String      @id @default(uuid()) @db.Uuid
+  rut          String?     @unique @db.VarChar(12)
+  email        String      @unique @db.VarChar(200)
+  passwordHash String      @map("password_hash") @db.VarChar(255)
+  nombre       String      @db.VarChar(150)
+  apellido     String      @db.VarChar(150)
+  telefono     String?     @db.VarChar(20)
+  rol          RolUsuario  @default(FUNCIONARIO)
+  activo       Boolean     @default(true)
+  createdAt    DateTime    @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt    DateTime    @updatedAt @map("updated_at") @db.Timestamp(6)
+  lastLoginAt  DateTime?   @map("last_login_at") @db.Timestamp(6)
+
+  // Relaciones
+  solicitudHistoriales SolicitudHistorial[]
+  documentos           Documento[]
+  noticias             Noticia[]
+  logs                 LogSistema[]
+
+  @@map("usuario")
+  @@index([rol])
+  @@index([activo])
+  @@index([email])
   @@schema("core")
 }
 
-model tipo_documento {
-  id     Int      @id @default(autoincrement()) @db.SmallInt
-  codigo String   @unique @db.VarChar(50)
-  nombre String   @db.VarChar(100)
-  ambito String?  @db.VarChar(50)
-  activo Boolean? @default(true)
+// =============================================================================
+// MÓDULO DE SOCIOS
+// =============================================================================
 
-  documentos documento[]
+/// Socios afiliados a ANFUTRANS
+model Socio {
+  id                String       @id @default(uuid()) @db.Uuid
+  rut               String       @unique @db.VarChar(12)
+  nombre            String       @db.VarChar(150)
+  apellido          String       @db.VarChar(150)
+  email             String?      @db.VarChar(200)
+  telefono          String?      @db.VarChar(20)
+  telefonoEmergencia String?     @map("telefono_emergencia") @db.VarChar(20)
+  direccion         String?      @db.VarChar(300)
+  comunaId          Int          @map("comuna_id")
+  fechaNacimiento   DateTime?    @map("fecha_nacimiento") @db.Date
+  fechaIngreso      DateTime     @map("fecha_ingreso") @db.Date
+  numeroSocio       String?      @unique @map("numero_socio") @db.VarChar(20)
+  estado            EstadoSocio  @default(ACTIVO)
+  observaciones     String?      @db.Text
+  createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt         DateTime     @updatedAt @map("updated_at") @db.Timestamp(6)
 
+  // Relaciones
+  comuna              Comuna             @relation(fields: [comunaId], references: [id])
+  cuentaSocio         CuentaSocio?
+  solicitudes         Solicitud[]
+  beneficioSocios     BeneficioSocio[]
+  prestamos           Prestamo[]
+  descuentosPlanilla  DescuentoPlanilla[]
+
+  @@map("socio")
+  @@index([estado])
+  @@index([comunaId])
+  @@index([fechaIngreso])
+  @@index([numeroSocio])
   @@schema("core")
 }
 
-model parametro_sistema {
-  id          String    @id @default(uuid()) @db.Uuid
-  clave       String    @unique @db.VarChar(100)
-  valor       String?
-  descripcion String?
-  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamp(6)
+/// Cuenta financiera del socio (saldo, aportes, descuentos)
+model CuentaSocio {
+  id                   String   @id @default(uuid()) @db.Uuid
+  socioId              String   @unique @map("socio_id") @db.Uuid
+  saldoDisponible      Decimal  @default(0) @map("saldo_disponible") @db.Decimal(12, 2)
+  totalAportes         Decimal  @default(0) @map("total_aportes") @db.Decimal(12, 2)
+  totalDescuentos      Decimal  @default(0) @map("total_descuentos") @db.Decimal(12, 2)
+  totalPrestamos       Decimal  @default(0) @map("total_prestamos") @db.Decimal(12, 2)
+  saldoPendientePagos  Decimal  @default(0) @map("saldo_pendiente_pagos") @db.Decimal(12, 2)
+  ultimaActualizacion  DateTime @default(now()) @map("ultima_actualizacion") @db.Timestamp(6)
 
+  // Relaciones
+  socio Socio @relation(fields: [socioId], references: [id], onDelete: Cascade)
+
+  @@map("cuenta_socio")
   @@schema("core")
 }
 
-// --- SEGURIDAD ----------------------------------------------------------------
+// =============================================================================
+// MÓDULO DE SOLICITUDES Y TRÁMITES
+// =============================================================================
 
-model rol {
-  id          Int      @id @default(autoincrement()) @db.SmallInt
-  codigo      String   @unique @db.VarChar(20)
-  nombre      String   @db.VarChar(50)
-  descripcion String?
-  activo      Boolean? @default(true)
+/// Solicitudes de trámites realizadas por socios
+model Solicitud {
+  id                String           @id @default(uuid()) @db.Uuid
+  socioId           String           @map("socio_id") @db.Uuid
+  tipo              TipoSolicitud
+  estado            EstadoSolicitud  @default(BORRADOR)
+  fechaSolicitud    DateTime         @default(now()) @map("fecha_solicitud") @db.Timestamp(6)
+  fechaAprobacion   DateTime?        @map("fecha_aprobacion") @db.Timestamp(6)
+  fechaCompletada   DateTime?        @map("fecha_completada") @db.Timestamp(6)
+  montoSolicitado   Decimal?         @map("monto_solicitado") @db.Decimal(12, 2)
+  montoAprobado     Decimal?         @map("monto_aprobado") @db.Decimal(12, 2)
+  observaciones     String?          @db.Text
+  motivoRechazo     String?          @map("motivo_rechazo") @db.Text
+  createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt         DateTime         @updatedAt @map("updated_at") @db.Timestamp(6)
 
-  usuarios usuario[]
+  // Relaciones
+  socio              Socio                 @relation(fields: [socioId], references: [id])
+  historial          SolicitudHistorial[]
+  solicitudDocumentos SolicitudDocumento[]
 
+  @@map("solicitud")
+  @@index([socioId])
+  @@index([estado])
+  @@index([tipo])
+  @@index([fechaSolicitud])
+  @@index([socioId, estado])
   @@schema("core")
 }
 
-model usuario {
-  id           String    @id @default(uuid()) @db.Uuid
-  email        String    @unique @db.VarChar(150)
-  passwordHash String    @map("password_hash") @db.VarChar(255)
-  nombre       String    @db.VarChar(100)
-  apellido     String    @db.VarChar(100)
-  rolId        Int       @map("rol_id") @db.SmallInt
-  activo       Boolean?  @default(true)
-  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt    DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
+/// Historial de cambios de estado de solicitudes
+model SolicitudHistorial {
+  id          String          @id @default(uuid()) @db.Uuid
+  solicitudId String          @map("solicitud_id") @db.Uuid
+  estadoAnterior EstadoSolicitud? @map("estado_anterior")
+  estadoNuevo EstadoSolicitud  @map("estado_nuevo")
+  usuarioId   String?         @map("usuario_id") @db.Uuid
+  fecha       DateTime        @default(now()) @db.Timestamp(6)
+  comentario  String?         @db.Text
 
-  rol                  rol                   @relation(fields: [rolId], references: [id])
-  solicitudHistoriales solicitud_historial[]
-  documentos           documento[]
+  // Relaciones
+  solicitud Solicitud @relation(fields: [solicitudId], references: [id], onDelete: Cascade)
+  usuario   Usuario?  @relation(fields: [usuarioId], references: [id])
 
+  @@map("solicitud_historial")
+  @@index([solicitudId])
+  @@index([fecha])
   @@schema("core")
 }
 
-// --- SOCIOS -------------------------------------------------------------------
+/// Relación M:N entre solicitudes y documentos
+model SolicitudDocumento {
+  id          String   @id @default(uuid()) @db.Uuid
+  solicitudId String   @map("solicitud_id") @db.Uuid
+  documentoId String   @map("documento_id") @db.Uuid
+  fecha       DateTime @default(now()) @db.Timestamp(6)
+  comentario  String?  @db.Text
 
-model socio {
-  id           String    @id @default(uuid()) @db.Uuid
-  rut          String    @unique @db.VarChar(12)
-  nombre       String    @db.VarChar(100)
-  apellido     String    @db.VarChar(100)
-  email        String?   @db.VarChar(150)
-  telefono     String?   @db.VarChar(20)
-  direccion    String?   @db.VarChar(250)
-  comunaId     Int       @map("comuna_id")
-  fechaIngreso DateTime? @map("fecha_ingreso") @db.Date
-  activo       Boolean?  @default(true)
-  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt    DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
+  // Relaciones
+  solicitud Solicitud @relation(fields: [solicitudId], references: [id], onDelete: Cascade)
+  documento Documento @relation(fields: [documentoId], references: [id])
 
-  comuna          comuna            @relation(fields: [comunaId], references: [id])
-  solicitudes     solicitud[]
-  beneficioSocios beneficio_socio[]
-
+  @@unique([solicitudId, documentoId])
+  @@map("solicitud_documento")
+  @@index([solicitudId])
+  @@index([documentoId])
   @@schema("core")
 }
 
-// --- TRAMITES -----------------------------------------------------------------
+// =============================================================================
+// MÓDULO FINANCIERO (PRÉSTAMOS Y DESCUENTOS)
+// =============================================================================
 
-model solicitud {
-  id                String    @id @default(uuid()) @db.Uuid
-  socioId           String    @map("socio_id") @db.Uuid
-  tipoSolicitudId   Int       @map("tipo_solicitud_id") @db.SmallInt
-  estadoSolicitudId Int       @map("estado_solicitud_id") @db.SmallInt
-  fechaSolicitud    DateTime? @default(now()) @map("fecha_solicitud") @db.Timestamp(6)
-  observaciones     String?
-  createdAt         DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt         DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
+/// Préstamos otorgados a socios
+model Prestamo {
+  id                    String          @id @default(uuid()) @db.Uuid
+  socioId               String          @map("socio_id") @db.Uuid
+  montoSolicitado       Decimal         @map("monto_solicitado") @db.Decimal(12, 2)
+  montoAprobado         Decimal?        @map("monto_aprobado") @db.Decimal(12, 2)
+  tasaInteres           Decimal         @map("tasa_interes") @db.Decimal(5, 2) // Porcentaje
+  numeroCuotas          Int             @map("numero_cuotas") @db.SmallInt
+  montoCuota            Decimal?        @map("monto_cuota") @db.Decimal(12, 2)
+  estado                EstadoPrestamo  @default(SOLICITADO)
+  fechaSolicitud        DateTime        @default(now()) @map("fecha_solicitud") @db.Timestamp(6)
+  fechaAprobacion       DateTime?       @map("fecha_aprobacion") @db.Timestamp(6)
+  fechaDesembolso       DateTime?       @map("fecha_desembolso") @db.Timestamp(6)
+  fechaPrimeraCuota     DateTime?       @map("fecha_primera_cuota") @db.Date
+  observaciones         String?         @db.Text
+  createdAt             DateTime        @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt             DateTime        @updatedAt @map("updated_at") @db.Timestamp(6)
 
-  socio           socio                 @relation(fields: [socioId], references: [id])
-  tipoSolicitud   tipo_solicitud        @relation(fields: [tipoSolicitudId], references: [id])
-  estadoSolicitud estado_solicitud      @relation(fields: [estadoSolicitudId], references: [id])
-  historial       solicitud_historial[]
-  documentos      solicitud_documento[]
+  // Relaciones
+  socio  Socio          @relation(fields: [socioId], references: [id])
+  cuotas CuotaPrestamo[]
 
+  @@map("prestamo")
+  @@index([socioId])
+  @@index([estado])
+  @@index([fechaSolicitud])
   @@schema("core")
 }
 
-model solicitud_historial {
-  id                String    @id @default(uuid()) @db.Uuid
-  solicitudId       String    @map("solicitud_id") @db.Uuid
-  estadoSolicitudId Int       @map("estado_solicitud_id") @db.SmallInt
-  usuarioId         String?   @map("usuario_id") @db.Uuid
-  fecha             DateTime? @default(now()) @db.Timestamp(6)
-  comentario        String?
-
-  solicitud       solicitud        @relation(fields: [solicitudId], references: [id])
-  estadoSolicitud estado_solicitud @relation(fields: [estadoSolicitudId], references: [id])
-  usuario         usuario?         @relation(fields: [usuarioId], references: [id])
-
-  @@schema("core")
-}
-
-// --- BENEFICIOS ---------------------------------------------------------------
-
-model beneficio {
+/// Cuotas de préstamos
+model CuotaPrestamo {
   id              String    @id @default(uuid()) @db.Uuid
-  nombre          String    @db.VarChar(150)
-  descripcion     String?
-  tipoBeneficioId Int       @map("tipo_beneficio_id") @db.SmallInt
-  activo          Boolean?  @default(true)
-  createdAt       DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  prestamoId      String    @map("prestamo_id") @db.Uuid
+  numeroCuota     Int       @map("numero_cuota") @db.SmallInt
+  montoCuota      Decimal   @map("monto_cuota") @db.Decimal(12, 2)
+  montoCapital    Decimal   @map("monto_capital") @db.Decimal(12, 2)
+  montoInteres    Decimal   @map("monto_interes") @db.Decimal(12, 2)
+  fechaVencimiento DateTime @map("fecha_vencimiento") @db.Date
+  fechaPago       DateTime? @map("fecha_pago") @db.Date
+  montoPagado     Decimal?  @map("monto_pagado") @db.Decimal(12, 2)
+  pagada          Boolean   @default(false)
 
-  tipoBeneficio   tipo_beneficio    @relation(fields: [tipoBeneficioId], references: [id])
-  beneficioSocios beneficio_socio[]
+  // Relaciones
+  prestamo Prestamo @relation(fields: [prestamoId], references: [id], onDelete: Cascade)
 
+  @@map("cuota_prestamo")
+  @@index([prestamoId])
+  @@index([fechaVencimiento])
+  @@index([pagada])
   @@schema("core")
 }
 
-model beneficio_socio {
+/// Descuentos por planilla a socios
+model DescuentoPlanilla {
+  id              String         @id @default(uuid()) @db.Uuid
+  socioId         String         @map("socio_id") @db.Uuid
+  tipo            TipoDescuento
+  mesAno          String         @map("mes_ano") @db.VarChar(7) // "2025-01"
+  monto           Decimal        @db.Decimal(12, 2)
+  descripcion     String?        @db.VarChar(300)
+  aplicado        Boolean        @default(false)
+  fechaAplicacion DateTime?      @map("fecha_aplicacion") @db.Date
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
+
+  // Relaciones
+  socio Socio @relation(fields: [socioId], references: [id])
+
+  @@map("descuento_planilla")
+  @@index([socioId])
+  @@index([mesAno])
+  @@index([aplicado])
+  @@schema("core")
+}
+
+// =============================================================================
+// MÓDULO DE BENEFICIOS
+// =============================================================================
+
+/// Beneficios disponibles para socios
+model Beneficio {
+  id              String    @id @default(uuid()) @db.Uuid
+  nombre          String    @db.VarChar(200)
+  descripcion     String?   @db.Text
+  requisitos      String?   @db.Text
+  montoMaximo     Decimal?  @map("monto_maximo") @db.Decimal(12, 2)
+  vigenciaDesde   DateTime? @map("vigencia_desde") @db.Date
+  vigenciaHasta   DateTime? @map("vigencia_hasta") @db.Date
+  activo          Boolean   @default(true)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  // Relaciones
+  beneficioSocios BeneficioSocio[]
+
+  @@map("beneficio")
+  @@index([activo])
+  @@schema("core")
+}
+
+/// Relación M:N entre beneficios y socios
+model BeneficioSocio {
   id                String    @id @default(uuid()) @db.Uuid
   socioId           String    @map("socio_id") @db.Uuid
   beneficioId       String    @map("beneficio_id") @db.Uuid
-  fechaOtorgamiento DateTime? @default(now()) @map("fecha_otorgamiento") @db.Timestamp(6)
-  activo            Boolean?  @default(true)
-  createdAt         DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  fechaOtorgamiento DateTime  @default(now()) @map("fecha_otorgamiento") @db.Timestamp(6)
+  montoOtorgado     Decimal?  @map("monto_otorgado") @db.Decimal(12, 2)
+  documentoRespaldo String?   @map("documento_respaldo") @db.VarChar(500)
+  activo            Boolean   @default(true)
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
 
-  socio     socio     @relation(fields: [socioId], references: [id])
-  beneficio beneficio @relation(fields: [beneficioId], references: [id])
+  // Relaciones
+  socio     Socio     @relation(fields: [socioId], references: [id])
+  beneficio Beneficio @relation(fields: [beneficioId], references: [id])
 
   @@unique([socioId, beneficioId])
+  @@map("beneficio_socio")
+  @@index([socioId])
+  @@index([beneficioId])
+  @@index([activo])
   @@schema("core")
 }
 
-// --- DOCUMENTOS ---------------------------------------------------------------
+// =============================================================================
+// MÓDULO DE PORTAL Y CONTENIDOS
+// =============================================================================
 
-model documento {
+/// Noticias y comunicados publicados en el portal
+model Noticia {
   id              String    @id @default(uuid()) @db.Uuid
-  nombreArchivo   String    @map("nombre_archivo") @db.VarChar(255)
-  ruta            String    @db.VarChar(500)
-  tipoDocumentoId Int       @map("tipo_documento_id") @db.SmallInt
-  usuarioId       String?   @map("usuario_id") @db.Uuid
-  tamanioBytes    Int?      @map("tamanio_bytes")
-  fechaSubida     DateTime? @default(now()) @map("fecha_subida") @db.Timestamp(6)
+  titulo          String    @db.VarChar(300)
+  resumen         String?   @db.VarChar(500)
+  contenido       String    @db.Text
+  imagenPortada   String?   @map("imagen_portada") @db.VarChar(500)
+  autorId         String    @map("autor_id") @db.Uuid
+  publicada       Boolean   @default(false)
+  destacada       Boolean   @default(false)
+  fechaPublicacion DateTime? @map("fecha_publicacion") @db.Timestamp(6)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamp(6)
 
-  tipoDocumento       tipo_documento        @relation(fields: [tipoDocumentoId], references: [id])
-  usuario             usuario?              @relation(fields: [usuarioId], references: [id])
-  solicitudDocumentos solicitud_documento[]
+  // Relaciones
+  autor Usuario @relation(fields: [autorId], references: [id])
 
+  @@map("noticia")
+  @@index([publicada])
+  @@index([destacada])
+  @@index([fechaPublicacion])
   @@schema("core")
 }
 
-model solicitud_documento {
+/// Documentos institucionales y archivos
+model Documento {
+  id              String        @id @default(uuid()) @db.Uuid
+  nombreArchivo   String        @map("nombre_archivo") @db.VarChar(300)
+  titulo          String?       @db.VarChar(300)
+  descripcion     String?       @db.Text
+  ruta            String        @db.VarChar(500)
+  tipo            TipoDocumento
+  tamanioBytes    Int?          @map("tamanio_bytes")
+  usuarioId       String?       @map("usuario_id") @db.Uuid
+  publico         Boolean       @default(false)
+  fechaSubida     DateTime      @default(now()) @map("fecha_subida") @db.Timestamp(6)
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
+
+  // Relaciones
+  usuario             Usuario?             @relation(fields: [usuarioId], references: [id])
+  solicitudDocumentos SolicitudDocumento[]
+
+  @@map("documento")
+  @@index([tipo])
+  @@index([usuarioId])
+  @@index([publico])
+  @@index([fechaSubida])
+  @@schema("core")
+}
+
+/// Galería multimedia (fotos y videos institucionales)
+model Galeria {
   id          String    @id @default(uuid()) @db.Uuid
-  solicitudId String    @map("solicitud_id") @db.Uuid
-  documentoId String    @map("documento_id") @db.Uuid
-  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  titulo      String    @db.VarChar(300)
+  descripcion String?   @db.Text
+  tipoMedia   TipoMedia @map("tipo_media")
+  urlArchivo  String    @map("url_archivo") @db.VarChar(500)
+  urlThumbnail String?  @map("url_thumbnail") @db.VarChar(500)
+  publico     Boolean   @default(true)
+  orden       Int?
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
 
-  solicitud solicitud @relation(fields: [solicitudId], references: [id])
-  documento documento @relation(fields: [documentoId], references: [id])
+  @@map("galeria")
+  @@index([tipoMedia])
+  @@index([publico])
+  @@index([orden])
+  @@schema("core")
+}
 
-  @@unique([solicitudId, documentoId])
+// =============================================================================
+// MÓDULO DE AUDITORÍA
+// =============================================================================
+
+/// Logs de auditoría del sistema
+model LogSistema {
+  id         String   @id @default(uuid()) @db.Uuid
+  usuarioId  String?  @map("usuario_id") @db.Uuid
+  accion     String   @db.VarChar(100)
+  modulo     String   @db.VarChar(100)
+  entidad    String?  @db.VarChar(100)
+  entidadId  String?  @map("entidad_id") @db.VarChar(100)
+  detalles   String?  @db.Text
+  ipAddress  String?  @map("ip_address") @db.VarChar(50)
+  userAgent  String?  @map("user_agent") @db.VarChar(500)
+  fecha      DateTime @default(now()) @db.Timestamp(6)
+
+  // Relaciones
+  usuario Usuario? @relation(fields: [usuarioId], references: [id])
+
+  @@map("log_sistema")
+  @@index([usuarioId])
+  @@index([modulo])
+  @@index([accion])
+  @@index([fecha])
+  @@schema("core")
+}
+
+// =============================================================================
+// MÓDULOS FUTUROS (Votación Electrónica, Asambleas, Firmas Digitales)
+// =============================================================================
+
+/// Votaciones electrónicas para elecciones y consultas
+model Votacion {
+  id                String    @id @default(uuid()) @db.Uuid
+  titulo            String    @db.VarChar(300)
+  descripcion       String?   @db.Text
+  tipo              String    @db.VarChar(50) // ELECCION, CONSULTA, REFERENDUM
+  fechaInicio       DateTime  @map("fecha_inicio") @db.Timestamp(6)
+  fechaCierre       DateTime  @map("fecha_cierre") @db.Timestamp(6)
+  requiereQuorum    Boolean   @default(false) @map("requiere_quorum")
+  quorumMinimo      Int?      @map("quorum_minimo")
+  permiteCambioVoto Boolean   @default(false) @map("permite_cambio_voto")
+  resultadosPublicos Boolean  @default(false) @map("resultados_publicos")
+  activa            Boolean   @default(false)
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+
+  // Relaciones
+  votos Voto[]
+
+  @@map("votacion")
+  @@index([activa])
+  @@index([fechaInicio])
+  @@index([fechaCierre])
+  @@schema("core")
+}
+
+/// Votos emitidos en votaciones
+model Voto {
+  id         String   @id @default(uuid()) @db.Uuid
+  votacionId String   @map("votacion_id") @db.Uuid
+  socioId    String   @map("socio_id") @db.Uuid
+  opcion     String   @db.VarChar(300)
+  votoHash   String   @map("voto_hash") @db.VarChar(255) // Hash para anonimizar
+  fecha      DateTime @default(now()) @db.Timestamp(6)
+
+  // Relaciones
+  votacion Votacion @relation(fields: [votacionId], references: [id], onDelete: Cascade)
+
+  @@unique([votacionId, socioId])
+  @@map("voto")
+  @@index([votacionId])
+  @@index([fecha])
+  @@schema("core")
+}
+
+/// Asambleas y reuniones institucionales
+model Asamblea {
+  id                String    @id @default(uuid()) @db.Uuid
+  titulo            String    @db.VarChar(300)
+  tipo              String    @db.VarChar(50) // ORDINARIA, EXTRAORDINARIA
+  fechaConvocatoria DateTime  @map("fecha_convocatoria") @db.Timestamp(6)
+  fechaRealizacion  DateTime  @map("fecha_realizacion") @db.Timestamp(6)
+  lugar             String?   @db.VarChar(300)
+  modalidad         String?   @db.VarChar(50) // PRESENCIAL, REMOTA, HIBRIDA
+  quorum            Int?
+  asistentes        Int?
+  temas             String?   @db.Text
+  realizada         Boolean   @default(false)
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+
+  // Relaciones
+  actas ActaAsamblea[]
+
+  @@map("asamblea")
+  @@index([fechaRealizacion])
+  @@index([realizada])
+  @@schema("core")
+}
+
+/// Actas de asambleas
+model ActaAsamblea {
+  id          String   @id @default(uuid()) @db.Uuid
+  asambleaId  String   @map("asamblea_id") @db.Uuid
+  contenido   String   @db.Text
+  acuerdos    String?  @db.Text
+  urlDocumento String? @map("url_documento") @db.VarChar(500)
+  aprobada    Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  // Relaciones
+  asamblea Asamblea @relation(fields: [asambleaId], references: [id], onDelete: Cascade)
+
+  @@map("acta_asamblea")
+  @@index([asambleaId])
+  @@index([aprobada])
+  @@schema("core")
+}
+
+/// Firmas digitales de documentos
+model FirmaDocumento {
+  id          String   @id @default(uuid()) @db.Uuid
+  documentoId String   @map("documento_id") @db.Uuid
+  firmante    String   @db.VarChar(200) // Nombre del firmante
+  rutFirmante String   @map("rut_firmante") @db.VarChar(12)
+  firma       String   @db.Text // Firma digital cifrada
+  fecha       DateTime @default(now()) @db.Timestamp(6)
+
+  @@map("firma_documento")
+  @@index([documentoId])
+  @@index([rutFirmante])
+  @@index([fecha])
   @@schema("core")
 }

@@ -1,1 +1,22 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* FASE 7: Estilos para notificaciones y componentes globales */
+@import './styles/notifications.scss';
+
+/* Global styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+

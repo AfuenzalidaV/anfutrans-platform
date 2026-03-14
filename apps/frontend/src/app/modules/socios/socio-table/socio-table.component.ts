@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { SocioService } from '../socio.service';
 import { Socio } from '../../../shared/models/socio.model';
+import { NotificationService } from '../../../core/services/notification.service';
+import { DialogService } from '../../../core/services/dialog.service';
 
 /**
  * Componente de tabla para Socio
  * Generado automáticamente desde Prisma Schema
+ * MEJORADO: FASE 7 - Dashboard + CRUD completo
+ * MEJORADO: FASE 8 - Interceptores HTTP (loading automático)
  */
 @Component({
   selector: 'app-socio-table',
@@ -15,10 +19,14 @@ import { Socio } from '../../../shared/models/socio.model';
 export class SocioTable implements OnInit {
 
   data: Socio[] = [];
-  columns = ['id', 'rut', 'nombre', 'apellido', 'email'];
+  columns = ['id', 'rut', 'nombre', 'apellido', 'email', 'actions'];
   loading = false;
 
-  constructor(private service: SocioService) {}
+  constructor(
+    private service: SocioService,
+    private notificationService: NotificationService,
+    private dialogService: DialogService
+  ) {}
 
   ngOnInit() {
     this.loadData();
@@ -33,24 +41,30 @@ export class SocioTable implements OnInit {
       },
       error: (error) => {
         console.error('Error al cargar socios:', error);
+        // El errorInterceptor ya muestra la notificación
         this.loading = false;
-        // Datos demo para testing
         this.data = [];
       }
     });
   }
 
-  onDelete(id: string | number) {
-    if (confirm('¿Está seguro de eliminar este registro?')) {
-      this.service.delete(id).subscribe({
-        next: () => {
-          this.loadData();
-        },
-        error: (error) => {
-          console.error('Error al eliminar:', error);
-          alert('Error al eliminar el registro');
-        }
-      });
-    }
+  onDelete(socio: Socio) {
+    const itemName = `${socio.nombre} ${socio.apellido} (RUT: ${socio.rut})`;
+
+    this.dialogService.confirmDelete(itemName).subscribe(confirmed => {
+      if (confirmed) {
+        // El loadingInterceptor activa el loading automáticamente
+        this.service.delete(socio.id).subscribe({
+          next: () => {
+            this.notificationService.success('Socio eliminado exitosamente');
+            this.loadData();
+          },
+          error: (error) => {
+            console.error('Error al eliminar:', error);
+            // El errorInterceptor ya muestra la notificación
+          }
+        });
+      }
+    });
   }
 }

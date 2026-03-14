@@ -1,0 +1,101 @@
+<div class="dashboard-container">
+  <h1>Dashboard ANFUTRANS</h1>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+    <p>Cargando estadísticas...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="error && !loading">
+    <mat-icon color="warn">error</mat-icon>
+    <p>Error al cargar las estadísticas</p>
+    <button mat-raised-button color="primary" (click)="retry()">
+      <mat-icon>refresh</mat-icon>
+      Reintentar
+    </button>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid" *ngIf="!loading && !error">
+    <!-- Card Socios -->
+    <mat-card class="stat-card socios">
+      <mat-card-header>
+        <mat-icon>people</mat-icon>
+        <mat-card-title>Socios</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-value">{{ stats.totalSocios }}</div>
+        <div class="stat-label">Total de socios registrados</div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button routerLink="/socios">Ver todos</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Card Solicitudes -->
+    <mat-card class="stat-card solicitudes">
+      <mat-card-header>
+        <mat-icon>description</mat-icon>
+        <mat-card-title>Solicitudes</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-value">{{ stats.totalSolicitudes }}</div>
+        <div class="stat-label">Solicitudes activas</div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button routerLink="/solicitudes">Ver todas</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Card Beneficios -->
+    <mat-card class="stat-card beneficios">
+      <mat-card-header>
+        <mat-icon>card_giftcard</mat-icon>
+        <mat-card-title>Beneficios</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-value">{{ stats.totalBeneficios }}</div>
+        <div class="stat-label">Beneficios otorgados</div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button routerLink="/beneficios">Ver todos</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Card Usuarios -->
+    <mat-card class="stat-card usuarios">
+      <mat-card-header>
+        <mat-icon>admin_panel_settings</mat-icon>
+        <mat-card-title>Usuarios</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-value">{{ stats.totalUsuarios }}</div>
+        <div class="stat-label">Usuarios del sistema</div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button routerLink="/usuarios">Ver todos</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions" *ngIf="!loading && !error">
+    <h2>Acciones Rápidas</h2>
+    <div class="actions-grid">
+      <button mat-raised-button color="primary" routerLink="/socios/crear">
+        <mat-icon>person_add</mat-icon>
+        Nuevo Socio
+      </button>
+      <button mat-raised-button color="accent" routerLink="/solicitudes/crear">
+        <mat-icon>note_add</mat-icon>
+        Nueva Solicitud
+      </button>
+      <button mat-raised-button color="primary" routerLink="/beneficios/crear">
+        <mat-icon>add_card</mat-icon>
+        Nuevo Beneficio
+      </button>
+    </div>
+  </div>
+</div>

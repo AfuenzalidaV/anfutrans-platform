@@ -16,6 +16,7 @@ import { EstadoSolicitudModule } from './catalogos/estado-solicitud/estado-solic
 import { ParametrosModule } from './catalogos/parametros/parametros.module';
 import { CargosDirigencialesModule } from './catalogos/cargos-dirigenciales/cargos-dirigenciales.module';
 import { TipoSolicitudModule } from './catalogos/tipo-solicitud/tipo-solicitud.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { TipoSolicitudModule } from './catalogos/tipo-solicitud/tipo-solicitud.m
     TramitesModule,
     BeneficiosModule,
     ContenidosModule,
+    HealthModule,
   ],
 })
 export class AppModule {}

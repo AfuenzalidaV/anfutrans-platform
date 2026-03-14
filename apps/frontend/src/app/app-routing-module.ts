@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { Login } from './core/auth/login/login';
-// import { Dashboard } from './modules/dashboard/dashboard/dashboard'; // TODO: Implementar Dashboard
 import { AuthGuard } from './core/guards/auth.guard';
 
 const routes: Routes = [
@@ -14,8 +13,12 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
 
-      { path: '', redirectTo: 'socios', pathMatch: 'full' }, // Temporal: redirige a socios
-      // { path: 'dashboard', component: Dashboard }, // TODO: Implementar Dashboard
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      {
+        path: 'dashboard',
+        loadChildren: () =>
+          import('./modules/dashboard/dashboard.module').then(m => m.DashboardModule)
+      },
 
       // Módulos generados automáticamente desde Prisma Schema
       {

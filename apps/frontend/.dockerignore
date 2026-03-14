@@ -1,0 +1,64 @@
+# Dependencias
+node_modules
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+dist
+.angular
+.cache
+
+# Testing
+coverage
+*.spec.ts
+karma.conf.js
+jest.config.js
+
+# Environment files
+.env
+.env.local
+.env.*.local
+src/environments/environment.ts
+src/environments/environment.development.ts
+
+# IDEs
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Logs
+logs
+*.log
+
+# Temp files
+.temp
+.tmp
+
+# Documentation
+README.md
+docs/
+*.md
+
+# GitHub
+.github
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Config files
+.prettierrc
+.eslintrc.json
+.editorconfig
+tsconfig*.json
+angular.json

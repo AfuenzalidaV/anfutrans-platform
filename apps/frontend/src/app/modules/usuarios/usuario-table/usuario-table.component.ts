@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { UsuarioService } from '../usuario.service';
 import { Usuario } from '../../../shared/models/usuario.model';
+import { NotificationService } from '../../../core/services/notification.service';
+import { DialogService } from '../../../core/services/dialog.service';
 
 /**
  * Componente de tabla para Usuario
  * Generado automáticamente desde Prisma Schema
+ * MEJORADO: FASE 7 - Dashboard + CRUD completo
+ * MEJORADO: FASE 8 - Interceptores HTTP (loading automático)
  */
 @Component({
   selector: 'app-usuario-table',
@@ -15,10 +19,14 @@ import { Usuario } from '../../../shared/models/usuario.model';
 export class UsuarioTable implements OnInit {
 
   data: Usuario[] = [];
-  columns = ['id', 'email', 'passwordHash', 'nombre', 'apellido'];
+  columns = ['id', 'email', 'nombre', 'apellido', 'activo', 'actions'];
   loading = false;
 
-  constructor(private service: UsuarioService) {}
+  constructor(
+    private service: UsuarioService,
+    private notificationService: NotificationService,
+    private dialogService: DialogService
+  ) {}
 
   ngOnInit() {
     this.loadData();
@@ -33,24 +41,30 @@ export class UsuarioTable implements OnInit {
       },
       error: (error) => {
         console.error('Error al cargar usuarios:', error);
+        // El errorInterceptor ya muestra la notificación
         this.loading = false;
-        // Datos demo para testing
         this.data = [];
       }
     });
   }
 
-  onDelete(id: string | number) {
-    if (confirm('¿Está seguro de eliminar este registro?')) {
-      this.service.delete(id).subscribe({
-        next: () => {
-          this.loadData();
-        },
-        error: (error) => {
-          console.error('Error al eliminar:', error);
-          alert('Error al eliminar el registro');
-        }
-      });
-    }
+  onDelete(usuario: Usuario) {
+    const itemName = `${usuario.nombre} ${usuario.apellido} (${usuario.email})`;
+
+    this.dialogService.confirmDelete(itemName).subscribe(confirmed => {
+      if (confirmed) {
+        // El loadingInterceptor activa el loading automáticamente
+        this.service.delete(usuario.id).subscribe({
+          next: () => {
+            this.notificationService.success('Usuario eliminado exitosamente');
+            this.loadData();
+          },
+          error: (error) => {
+            console.error('Error al eliminar:', error);
+            // El errorInterceptor ya muestra la notificación
+          }
+        });
+      }
+    });
   }
 }

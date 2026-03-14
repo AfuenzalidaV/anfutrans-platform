@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { BeneficioService } from '../beneficio.service';
 import { Beneficio } from '../../../shared/models/beneficio.model';
+import { NotificationService } from '../../../core/services/notification.service';
+import { DialogService } from '../../../core/services/dialog.service';
 
 /**
  * Componente de tabla para Beneficio
  * Generado automáticamente desde Prisma Schema
+ * MEJORADO: FASE 7 - Dashboard + CRUD completo
+ * MEJORADO: FASE 8 - Interceptores HTTP (loading automático)
  */
 @Component({
   selector: 'app-beneficio-table',
@@ -15,10 +19,14 @@ import { Beneficio } from '../../../shared/models/beneficio.model';
 export class BeneficioTable implements OnInit {
 
   data: Beneficio[] = [];
-  columns = ['id', 'nombre', 'descripcion', 'tipoBeneficioId', 'activo'];
+  columns = ['id', 'nombre', 'descripcion', 'tipoBeneficioId', 'activo', 'actions'];
   loading = false;
 
-  constructor(private service: BeneficioService) {}
+  constructor(
+    private service: BeneficioService,
+    private notificationService: NotificationService,
+    private dialogService: DialogService
+  ) {}
 
   ngOnInit() {
     this.loadData();
@@ -33,24 +41,30 @@ export class BeneficioTable implements OnInit {
       },
       error: (error) => {
         console.error('Error al cargar beneficios:', error);
+        // El errorInterceptor ya muestra la notificación
         this.loading = false;
-        // Datos demo para testing
         this.data = [];
       }
     });
   }
 
-  onDelete(id: string | number) {
-    if (confirm('¿Está seguro de eliminar este registro?')) {
-      this.service.delete(id).subscribe({
-        next: () => {
-          this.loadData();
-        },
-        error: (error) => {
-          console.error('Error al eliminar:', error);
-          alert('Error al eliminar el registro');
-        }
-      });
-    }
+  onDelete(beneficio: Beneficio) {
+    const itemName = `el beneficio "${beneficio.nombre}"`;
+
+    this.dialogService.confirmDelete(itemName).subscribe(confirmed => {
+      if (confirmed) {
+        // El loadingInterceptor activa el loading automáticamente
+        this.service.delete(beneficio.id).subscribe({
+          next: () => {
+            this.notificationService.success('Beneficio eliminado exitosamente');
+            this.loadData();
+          },
+          error: (error) => {
+            console.error('Error al eliminar:', error);
+            // El errorInterceptor ya muestra la notificación
+          }
+        });
+      }
+    });
   }
 }
