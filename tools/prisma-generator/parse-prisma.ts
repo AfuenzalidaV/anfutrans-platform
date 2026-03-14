@@ -39,6 +39,7 @@ export interface PrismaModel {
   camelName: string;
   kebabName: string;
   pluralName: string;
+  pascalPluralName: string;
   fields: PrismaField[];
   scalarFields: PrismaField[];
   relationFields: PrismaField[];
@@ -79,12 +80,15 @@ export class PrismaParser {
   private parseModel(name: string, content: string): PrismaModel {
     const fields = this.parseFields(content);
 
+    const pluralName = this.pluralize(name);
+
     return {
       name,
       pascalName: this.toPascalCase(name),
       camelName: this.toCamelCase(name),
       kebabName: this.toKebabCase(name),
-      pluralName: this.pluralize(name),
+      pluralName,
+      pascalPluralName: this.toPascalCase(pluralName),
       fields,
       scalarFields: fields.filter(f => !f.isRelation),
       relationFields: fields.filter(f => f.isRelation)

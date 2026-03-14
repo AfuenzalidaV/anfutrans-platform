@@ -105,8 +105,8 @@ import { ${model.pascalName} } from '../../../shared/models/${model.kebabName}.m
 @Component({
   selector: 'app-${model.kebabName}-${selectorSuffix}',
   standalone: false,
-  templateUrl: './${model.kebabName}-${selectorSuffix}.html',
-  styleUrl: './${model.kebabName }-${selectorSuffix}.scss',
+  templateUrl: './${model.kebabName}-${selectorSuffix}.component.html',
+  styleUrl: './${model.kebabName}-${selectorSuffix}.component.scss',
 })
 export class ${componentName} implements OnInit {
 

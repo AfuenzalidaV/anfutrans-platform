@@ -1,0 +1,33 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Crear ParametroSistema</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form [formGroup]="form">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Clave</mat-label>
+        <input matInput type="text" formControlName="clave" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Valor</mat-label>
+        <input matInput type="text" formControlName="valor" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Descripcion</mat-label>
+        <input matInput type="text" formControlName="descripcion" required>
+      </mat-form-field>
+    </form>
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    <button mat-button (click)="cancel()" [disabled]="loading">
+      Cancelar
+    </button>
+    <button mat-raised-button color="primary" (click)="save()" [disabled]="loading || !form.valid">
+      {{ loading ? 'Guardando...' : 'Guardar' }}
+    </button>
+  </mat-card-actions>
+</mat-card>

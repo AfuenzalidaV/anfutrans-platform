@@ -18,8 +18,8 @@ import { ${model.pascalName} } from '../../../shared/models/${model.kebabName}.m
 @Component({
   selector: 'app-${model.kebabName}-table',
   standalone: false,
-  templateUrl: './${model.kebabName}-table.html',
-  styleUrl: './${model.kebabName}-table.scss',
+  templateUrl: './${model.kebabName}-table.component.html',
+  styleUrl: './${model.kebabName}-table.component.scss',
 })
 export class ${model.pascalName}Table implements OnInit {
 

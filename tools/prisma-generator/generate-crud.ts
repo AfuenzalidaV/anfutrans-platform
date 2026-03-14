@@ -237,12 +237,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
 
 import { ${model.pascalName}Table } from './${model.kebabName}-table/${model.kebabName}-table.component';
 import { ${model.pascalName}Create } from './${model.kebabName}-create/${model.kebabName}-create.component';
 import { ${model.pascalName}Edit } from './${model.kebabName}-edit/${model.kebabName}-edit.component';
 import { ${model.pascalName}Service } from './${model.kebabName}.service';
-import { ${model.pascalName.charAt(0).toUpperCase() + model.pluralName.slice(1)}RoutingModule } from './${model.pluralName}-routing.module';
+import { ${model.pascalPluralName}RoutingModule } from './${model.pluralName}-routing.module';
 import { SharedModule } from '../../shared/shared.module';
 
 /**
@@ -263,12 +264,13 @@ import { SharedModule } from '../../shared/shared.module';
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
-    ${model.pascalName.charAt(0).toUpperCase() + model.pluralName.slice(1)}RoutingModule,
+    MatIconModule,
+    ${model.pascalPluralName}RoutingModule,
     SharedModule
   ],
   providers: [${model.pascalName}Service]
 })
-export class ${model.pascalName.charAt(0).toUpperCase() + model.pluralName.slice(1)}Module { }
+export class ${model.pascalPluralName}Module { }
 `;
   }
 
@@ -292,7 +294,7 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class ${model.pascalName.charAt(0).toUpperCase() + model.pluralName.slice(1)}RoutingModule { }
+export class ${model.pascalPluralName}RoutingModule { }
 `;
   }
 

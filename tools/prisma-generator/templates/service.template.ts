@@ -49,10 +49,10 @@ export class ${model.pascalName}Service {
   }
 
   /**
-   * Elimina un ${model.pascalName}
+   * Elimina un${model.pascalName}
    */
   delete(id: string | number): Observable<void> {
-    return this.api.delete(\`\${this.endpoint}/\${id}\`) as Observable<void>;
+    return this.api.delete(\`\${this.endpoint}/\${id}\`);
   }
 }
 `;
