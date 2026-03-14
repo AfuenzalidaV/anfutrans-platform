@@ -1,0 +1,32 @@
+{
+  "name": "anfutrans-platform",
+  "version": "0.5.0",
+  "description": "ANFUTRANS Platform - Monorepo con generación automática de CRUD desde Prisma Schema",
+  "private": true,
+  "scripts": {
+    "generate:crud": "ts-node tools/prisma-generator/generate-crud.ts",
+    "backend:dev": "cd apps/backend && npm run start:dev",
+    "frontend:dev": "cd apps/frontend && npm start",
+    "install:all": "npm install && cd apps/backend && npm install && cd ../frontend && npm install",
+    "prisma:generate": "cd apps/backend && npx prisma generate",
+    "prisma:migrate": "cd apps/backend && npx prisma migrate dev"
+  },
+  "keywords": [
+    "anfutrans",
+    "nestjs",
+    "angular",
+    "prisma",
+    "crud-generator"
+  ],
+  "author": "ANFUTRANS Development Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
