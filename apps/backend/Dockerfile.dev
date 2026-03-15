@@ -1,0 +1,25 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Instalar dependencias del sistema
+RUN apk add --no-cache bash
+
+# Copiar package files
+COPY package*.json ./
+COPY prisma ./prisma/
+
+# Instalar dependencias
+RUN npm install
+
+# Generar Prisma Client
+RUN npx prisma generate
+
+# Copiar código fuente
+COPY . .
+
+# Exponer puertos
+EXPOSE 3000 9229
+
+# Comando por defecto (puede ser sobrescrito)
+CMD ["npm", "run", "start:dev"]

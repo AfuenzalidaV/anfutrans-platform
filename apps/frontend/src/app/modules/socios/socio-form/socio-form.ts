@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SociosService } from '../socios.service';
+import { SocioService } from '../socio.service';
 
 @Component({
   selector: 'app-socio-form',
@@ -16,7 +16,7 @@ export class SocioForm implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private sociosService: SociosService,
+    private socioService: SocioService,
     private router: Router
   ) {
     this.form = this.fb.group({
@@ -35,7 +35,7 @@ export class SocioForm implements OnInit {
     if (this.form.valid) {
       this.loading = true;
 
-      this.sociosService.createSocio(this.form.value).subscribe({
+      this.socioService.create(this.form.value).subscribe({
         next: (response) => {
           alert('Socio creado exitosamente');
           this.router.navigate(['/socios']);

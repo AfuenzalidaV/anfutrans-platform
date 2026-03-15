@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -9,19 +10,19 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  get(path: string) {
-    return this.http.get(`${this.api}/${path}`);
+  get<T = any>(path: string): Observable<T> {
+    return this.http.get<T>(`${this.api}/${path}`);
   }
 
-  post(path: string, body: any) {
-    return this.http.post(`${this.api}/${path}`, body);
+  post<T = any>(path: string, body: any): Observable<T> {
+    return this.http.post<T>(`${this.api}/${path}`, body);
   }
 
-  put(path: string, body: any) {
-    return this.http.put(`${this.api}/${path}`, body);
+  put<T = any>(path: string, body: any): Observable<T> {
+    return this.http.put<T>(`${this.api}/${path}`, body);
   }
 
-  delete(path: string) {
-    return this.http.delete(`${this.api}/${path}`);
+  delete(path: string): Observable<void> {
+    return this.http.delete<void>(`${this.api}/${path}`);
   }
 }

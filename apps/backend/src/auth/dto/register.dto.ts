@@ -1,6 +1,60 @@
+import {
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MinLength,
+  MaxLength,
+} from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { RolUsuario } from '../../../generated/prisma';
+
 export class RegisterDto {
+  @ApiProperty({
+    description: 'Email del usuario',
+    example: 'usuario@ejemplo.cl',
+  })
+  @IsEmail({}, { message: 'El email debe ser válido' })
+  @IsNotEmpty({ message: 'El email es requerido' })
   email!: string;
+
+  @ApiProperty({
+    description: 'Contraseña del usuario',
+    example: 'password123',
+    minLength: 8,
+  })
+  @IsString({ message: 'La contraseña debe ser un texto' })
+  @IsNotEmpty({ message: 'La contraseña es requerida' })
+  @MinLength(8, { message: 'La contraseña debe tener al menos 8 caracteres' })
   password!: string;
+
+  @ApiProperty({
+    description: 'Nombre del usuario',
+    example: 'Juan',
+    maxLength: 100,
+  })
+  @IsString({ message: 'El nombre debe ser un texto' })
+  @IsNotEmpty({ message: 'El nombre es requerido' })
+  @MaxLength(100, { message: 'El nombre no puede exceder 100 caracteres' })
   nombre!: string;
+
+  @ApiProperty({
+    description: 'Apellido del usuario',
+    example: 'Pérez',
+    maxLength: 100,
+  })
+  @IsString({ message: 'El apellido debe ser un texto' })
+  @IsNotEmpty({ message: 'El apellido es requerido' })
+  @MaxLength(100, { message: 'El apellido no puede exceder 100 caracteres' })
   apellido!: string;
+
+  @ApiPropertyOptional({
+    description: 'Rol del usuario (opcional, por defecto SOCIO)',
+    enum: RolUsuario,
+    example: RolUsuario.SOCIO,
+  })
+  @IsOptional()
+  @IsEnum(RolUsuario, { message: 'El rol debe ser un valor válido' })
+  rol?: RolUsuario;
 }

@@ -1,0 +1,22 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Instalar dependencias del sistema
+RUN apk add --no-cache bash
+
+# Copiar package files
+COPY package*.json ./
+
+# Instalar dependencias
+RUN npm install
+
+# Copiar configuración
+COPY angular.json ./
+COPY tsconfig*.json ./
+
+# Exponer puerto
+EXPOSE 4200
+
+# Comando por defecto (puede ser sobrescrito)
+CMD ["npm", "run", "start", "--", "--host", "0.0.0.0"]

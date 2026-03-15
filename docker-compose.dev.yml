@@ -1,0 +1,122 @@
+version: '3.8'
+
+services:
+  # ================================
+  # PostgreSQL Database (Dev)
+  # ================================
+  db:
+    image: postgres:14-alpine
+    container_name: anfutrans-db-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: anfutrans_dev
+      POSTGRES_PASSWORD: dev_password
+      POSTGRES_DB: anfutrans_dev
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - anfutrans-network-dev
+
+  # ================================
+  # Backend (Dev mode con hot reload)
+  # ================================
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile.dev
+    container_name: anfutrans-backend-dev
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_URL: postgresql://anfutrans_dev:dev_password@db:5432/anfutrans_dev?schema=core
+      JWT_SECRET: dev-secret-key
+      JWT_EXPIRATION: 24h
+      JWT_REFRESH_SECRET: dev-refresh-secret
+      JWT_REFRESH_EXPIRATION: 7d
+      BCRYPT_SALT_ROUNDS: 10
+      CORS_ORIGIN: http://localhost:4200
+      LOG_LEVEL: debug
+      SWAGGER_ENABLED: true
+    ports:
+      - "3000:3000"
+      - "9229:9229"  # Debug port
+    networks:
+      - anfutrans-network-dev
+    volumes:
+      - ./apps/backend/src:/app/src:ro
+      - ./apps/backend/prisma:/app/prisma:ro
+      - backend_uploads_dev:/app/uploads
+      - backend_node_modules:/app/node_modules
+    command: npm run start:dev
+
+  # ================================
+  # Frontend (Dev mode con hot reload)
+  # ================================
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile.dev
+    container_name: anfutrans-frontend-dev
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      API_URL: http://localhost:3000
+    ports:
+      - "4200:4200"
+    networks:
+      - anfutrans-network-dev
+    volumes:
+      - ./apps/frontend/src:/app/src:ro
+      - frontend_node_modules:/app/node_modules
+    command: npm run start -- --host 0.0.0.0 --poll
+
+  # ================================
+  # Adminer (DB Admin)
+  # ================================
+  adminer:
+    image: adminer:latest
+    container_name: anfutrans-adminer-dev
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+      ADMINER_DESIGN: dracula
+    ports:
+      - "8080:8080"
+    networks:
+      - anfutrans-network-dev
+
+  # ================================
+  # Mailhog (Email testing)
+  # ================================
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: anfutrans-mailhog-dev
+    restart: unless-stopped
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - anfutrans-network-dev
+
+networks:
+  anfutrans-network-dev:
+    driver: bridge
+
+volumes:
+  postgres_data_dev:
+    driver: local
+  backend_uploads_dev:
+    driver: local
+  backend_node_modules:
+    driver: local
+  frontend_node_modules:
+    driver: local

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SociosService } from '../socios.service';
+import { SocioService } from '../socio.service';
 
 @Component({
   selector: 'app-socios-table',
@@ -12,10 +12,10 @@ export class SociosTable implements OnInit {
   socios: any[] = [];
   columns = ['rut', 'nombre', 'apellido', 'email', 'telefono'];
 
-  constructor(private sociosService: SociosService) {}
+  constructor(private socioService: SocioService) {}
 
   ngOnInit() {
-    this.sociosService.getSocios().subscribe({
+    this.socioService.getAll().subscribe({
       next: (data: any) => {
         this.socios = data;
       },

@@ -1,11 +1,12 @@
-import { IsInt, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
+import { TipoSolicitud } from '../../../generated/prisma';
 
 export class CreateSolicitudDto {
   @IsUUID()
   socioId!: string;
 
-  @IsInt()
-  tipoSolicitudId!: number;
+  @IsEnum(TipoSolicitud)
+  tipo!: TipoSolicitud;
 
   @IsOptional()
   @IsString()

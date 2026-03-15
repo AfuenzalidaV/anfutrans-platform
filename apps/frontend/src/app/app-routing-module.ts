@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { Login } from './core/auth/login/login';
-import { Dashboard } from './modules/dashboard/dashboard/dashboard';
 import { AuthGuard } from './core/guards/auth.guard';
 
 const routes: Routes = [
@@ -15,37 +14,63 @@ const routes: Routes = [
     children: [
 
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: Dashboard },
+      {
+        path: 'dashboard',
+        loadChildren: () =>
+          import('./modules/dashboard/dashboard.module').then(m => m.DashboardModule)
+      },
 
+      // Módulos generados automáticamente desde Prisma Schema
       {
         path: 'socios',
         loadChildren: () =>
-          import('./modules/socios/socios-module').then(m => m.SociosModule)
+          import('./modules/socios/socios.module').then(m => m.SociosModule)
       },
 
       {
-        path: 'tramites',
+        path: 'solicitudes',
         loadChildren: () =>
-          import('./modules/tramites/tramites-module').then(m => m.TramitesModule)
+          import('./modules/solicitudes/solicitudes.module').then(m => m.SolicitudesModule)
       },
 
       {
         path: 'beneficios',
         loadChildren: () =>
-          import('./modules/beneficios/beneficios-module').then(m => m.BeneficiosModule)
-      },
-
-      {
-        path: 'catalogos',
-        loadChildren: () =>
-          import('./modules/catalogos/catalogos-module').then(m => m.CatalogosModule)
+          import('./modules/beneficios/beneficios.module').then(m => m.BeneficiosModule)
       },
 
       {
         path: 'usuarios',
         loadChildren: () =>
-          import('./modules/usuarios/usuarios-module').then(m => m.UsuariosModule)
+          import('./modules/usuarios/usuarios.module').then(m => m.UsuariosModule)
+      },
+
+      {
+        path: 'regiones',
+        loadChildren: () =>
+          import('./modules/regiones/regiones.module').then(m => m.RegionesModule)
+      },
+
+      {
+        path: 'comunas',
+        loadChildren: () =>
+          import('./modules/comunas/comunas.module').then(m => m.ComunasModule)
+      },
+
+      {
+        path: 'roles',
+        loadChildren: () =>
+          import('./modules/roles/roles.module').then(m => m.RolesModule)
+      },
+
+      {
+        path: 'documentos',
+        loadChildren: () =>
+          import('./modules/documentos/documentos.module').then(m => m.DocumentosModule)
       }
+
+      // TODO: Agregar rutas para los demás módulos generados según necesidad
+      // cargo_dirigenciales, tipo_solicitudes, tipo_documentos, etc.
 
     ]
   }

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { SociosService } from '../socios.service';
+import { SocioService } from '../socio.service';
 import { Socio } from '../../../shared/models';
 
 @Component({
@@ -13,13 +13,13 @@ import { Socio } from '../../../shared/models';
 })
 export class SociosList implements OnInit {
 
-  displayedColumns: string[] = ['rut', 'nombre', 'apellido', 'email', 'telefono'];
+  displayedColumns: string[] = ['rut', 'nombre', 'apellido', 'email', 'telefono', 'acciones'];
   dataSource: MatTableDataSource<Socio>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private sociosService: SociosService) {
+  constructor(private socioService: SocioService) {
     this.dataSource = new MatTableDataSource<Socio>([]);
   }
 
@@ -28,7 +28,7 @@ export class SociosList implements OnInit {
   }
 
   loadSocios() {
-    this.sociosService.getSocios().subscribe({
+    this.socioService.getAll().subscribe({
       next: (data: any) => {
         this.dataSource.data = data;
         this.dataSource.paginator = this.paginator;
@@ -38,9 +38,9 @@ export class SociosList implements OnInit {
         console.error('Error al cargar socios:', error);
         // Por ahora datos de demo
         this.dataSource.data = [
-          { id: '1', rut: '12345678-9', nombre: 'Juan', apellido: 'Pérez', email: 'juan@mail.com', telefono: '+56912345678', comunaId: 1 },
-          { id: '2', rut: '98765432-1', nombre: 'María', apellido: 'González', email: 'maria@mail.com', telefono: '+56987654321', comunaId: 2 },
-          { id: '3', rut: '11223344-5', nombre: 'Pedro', apellido: 'López', email: 'pedro@mail.com', telefono: '+56911223344', comunaId: 1 }
+          { id: '1', rut: '12345678-9', nombre: 'Juan', apellido: 'Pérez', email: 'juan@mail.com', telefono: '+56912345678', direccion: 'Av. Principal 123', comunaId: 1, fechaIngreso: new Date('2023-01-15'), activo: true, createdAt: new Date(), updatedAt: new Date() },
+          { id: '2', rut: '98765432-1', nombre: 'María', apellido: 'González', email: 'maria@mail.com', telefono: '+56987654321', direccion: 'Calle Secundaria 456', comunaId: 2, fechaIngreso: new Date('2023-03-20'), activo: true, createdAt: new Date(), updatedAt: new Date() },
+          { id: '3', rut: '11223344-5', nombre: 'Pedro', apellido: 'López', email: 'pedro@mail.com', telefono: '+56911223344', direccion: 'Pasaje Tercero 789', comunaId: 1, fechaIngreso: new Date('2023-05-10'), activo: true, createdAt: new Date(), updatedAt: new Date() }
         ];
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;

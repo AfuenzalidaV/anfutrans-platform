@@ -1,0 +1,48 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Crear Documento</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form [formGroup]="form">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>NombreArchivo</mat-label>
+        <input matInput type="text" formControlName="nombreArchivo" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Ruta</mat-label>
+        <input matInput type="text" formControlName="ruta" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>TipoDocumentoId</mat-label>
+        <input matInput type="number" formControlName="tipoDocumentoId" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>UsuarioId</mat-label>
+        <input matInput type="text" formControlName="usuarioId" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>TamanioBytes</mat-label>
+        <input matInput type="number" formControlName="tamanioBytes" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>FechaSubida</mat-label>
+        <input matInput type="date" formControlName="fechaSubida" required>
+      </mat-form-field>
+    </form>
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    <button mat-button (click)="cancel()" [disabled]="loading">
+      Cancelar
+    </button>
+    <button mat-raised-button color="primary" (click)="save()" [disabled]="loading || !form.valid">
+      {{ loading ? 'Guardando...' : 'Guardar' }}
+    </button>
+  </mat-card-actions>
+</mat-card>

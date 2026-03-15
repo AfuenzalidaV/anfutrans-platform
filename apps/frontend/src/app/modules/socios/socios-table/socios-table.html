@@ -1,19 +1,22 @@
-<mat-card>
-  <mat-card-header>
-    <mat-card-title>Socios</mat-card-title>
-  </mat-card-header>
+<div class="table-container">
+  <table mat-table [dataSource]="socios" class="full-width">
+    
+    <ng-container matColumnDef="rut">
+      <th mat-header-cell *matHeaderCellDef>RUT</th>
+      <td mat-cell *matCellDef="let row">{{row.rut}}</td>
+    </ng-container>
 
-  <mat-card-content>
-    <app-data-table
-      [data]="socios"
-      [columns]="columns">
-    </app-data-table>
-  </mat-card-content>
+    <ng-container matColumnDef="nombre">
+      <th mat-header-cell *matHeaderCellDef>Nombre</th>
+      <td mat-cell *matCellDef="let row">{{row.nombre}} {{row.apellido}}</td>
+    </ng-container>
 
-  <mat-card-actions align="end">
-    <button mat-raised-button color="primary" routerLink="/socios/nuevo">
-      <mat-icon>add</mat-icon>
-      Nuevo Socio
-    </button>
-  </mat-card-actions>
-</mat-card>
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef>Email</th>
+      <td mat-cell *matCellDef="let row">{{row.email}}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="['rut', 'nombre', 'email']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['rut', 'nombre', 'email'];"></tr>
+  </table>
+</div>

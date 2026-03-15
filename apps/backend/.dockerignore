@@ -1,0 +1,77 @@
+# Dependencias
+node_modules
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+dist
+build
+.next
+out
+
+# Testing
+coverage
+.nyc_output
+test
+*.spec.ts
+*.test.ts
+jest.config.js
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDEs
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Logs
+logs
+*.log
+
+# Temp files
+.temp
+.tmp
+*.pid
+*.seed
+*.pid.lock
+
+# Documentation
+README.md
+docs/
+*.md
+
+# GitHub
+.github
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Prisma migrations (se generan en runtime)
+prisma/migrations
+
+# Backups
+backups/
+
+# Scripts de desarrollo
+scripts/db-*.js
+
+# Config files
+.prettierrc
+.eslintrc.js
+.editorconfig
+tsconfig*.json
+nest-cli.json
